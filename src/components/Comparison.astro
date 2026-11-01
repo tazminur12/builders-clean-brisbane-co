@@ -1,0 +1,24 @@
+---
+/** "Why us vs a cheap clean" — only claims we can stand behind; placeholders until confirmed. */
+import { rich } from '../lib/text';
+const rows: [string, string, string][] = [
+  ['Focus', 'Builders and post-construction cleaning only', 'Usually general house or bond cleaning'],
+  ['Quote', 'Written and itemised, within {{QUOTE}}', 'Often an hourly rate or a phone estimate'],
+  ['Scope', 'Room-by-room checklist listed in the quote', 'Often “general clean”, scope unclear'],
+  ['Quality check', 'Supervisor walk before sign-off', 'Usually none'],
+  ['Proof', 'Before-and-after photo report', 'Rarely provided'],
+  ['Missed items', 'In-scope items re-cleaned if reported within {{RECLEAN}}', 'Often a new booking'],
+  ['Surfaces', 'Products and methods chosen for stone, glass, stainless and polished concrete', 'One product for everything'],
+  ['Scheduling', 'Booked into your program; we move when trades run late', 'Fitted in when they are free'],
+  ['Site paperwork', 'Public liability {{INSURANCE}}; white cards, police checks and SWMS on request{{?credentials}}', 'Often unknown'],
+];
+---
+<div class="table-wrap" role="region" aria-label="Comparison: our crew versus a marketplace or no-name cleaner" tabindex="0">
+  <table class="compare">
+    <caption class="sr-only">How a Builders Clean Brisbane Co. crew compares with a typical marketplace or no-name cleaner</caption>
+    <thead><tr><th scope="col">What you get</th><th scope="col">Our crew</th><th scope="col">Typical marketplace or no-name cleaner</th></tr></thead>
+    <tbody>
+      {rows.map(([k, a, b]) => <tr><th scope="row">{k}</th><td set:html={rich(a)} /><td>{b}</td></tr>)}
+    </tbody>
+  </table>
+</div>

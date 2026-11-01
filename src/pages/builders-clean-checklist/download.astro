@@ -1,0 +1,13 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import Icon from '../../components/Icon.astro';
+import { CHECKLIST_PDF } from '../../data/checklist';
+---
+<BaseLayout title="Your Builders Clean Checklist PDF | Builders Clean Brisbane Co." description="Download your free builders clean checklist for Queensland homes as a PDF, ready to print or send to your cleaner before handover or move-in day." noindex>
+  <PageHead h1="Your checklist is ready" eyebrow="Download">
+    <p class="lead">Thanks. Download the builders clean checklist below. Print it, or send it to your cleaner before the job.</p>
+    <p class="mt-2"><a class="btn btn--lime" href={CHECKLIST_PDF} download><Icon name="download" />Download the PDF</a></p>
+    <p class="mt-2"><a href="/builders-clean-checklist/" style="color:var(--c-lime)">Back to the checklist</a> · <a href="/contact/" style="color:var(--c-lime)">Get a quote</a></p>
+  </PageHead>
+</BaseLayout>

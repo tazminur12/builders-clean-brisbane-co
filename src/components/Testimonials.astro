@@ -1,0 +1,23 @@
+---
+/** Testimonial block — renders ONLY when real reviews exist. Empty array → nothing at all. */
+import { REVIEWS, type Review } from '../data/reviews';
+interface Props { filter?: string; limit?: number; heading?: string }
+const { filter, limit = 3, heading = 'What our customers say' } = Astro.props;
+const list: Review[] = (filter ? REVIEWS.filter((r) => r.pages?.includes(filter)) : REVIEWS).slice(0, limit);
+---
+{list.length > 0 && (
+  <section class="section section--mist" aria-labelledby="reviews-h">
+    <div class="wrap">
+      <h2 id="reviews-h">{heading}</h2>
+      <div class="grid grid--3">
+        {list.map((r) => (
+          <figure class="card">
+            <p><span role="img" aria-label={`${r.rating} out of 5 stars`}>{'★'.repeat(r.rating)}</span></p>
+            <blockquote><p>{r.text}</p></blockquote>
+            <figcaption class="small muted">{r.author}{r.jobType ? ` · ${r.jobType}` : ''}{r.suburb ? `, ${r.suburb}` : ''}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}

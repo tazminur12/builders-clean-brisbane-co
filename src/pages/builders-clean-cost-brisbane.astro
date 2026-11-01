@@ -1,0 +1,197 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import CtaButtons from '../components/CtaButtons.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import Comparison from '../components/Comparison.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { PRICE_TABLE, PRICE_PER_M2, PRICE_FROM, PRICE_TO } from '../data/pricing';
+import { PRICE_FAQS } from '../data/faqs';
+import { PHOTOS } from '../data/photos';
+import { breadcrumbList } from '../lib/schema';
+import { priceText, quoteTime, recleanTime, rich } from '../lib/text';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Price guide', href: '/builders-clean-cost-brisbane/' }];
+const from = priceText(PRICE_FROM, '[PRICE FROM]');
+const to = priceText(PRICE_TO, '[PRICE TO]');
+const p = (v: string) => priceText(v, '[PRICE]');
+const faqs = PRICE_FAQS.map((f) => ({ ...f, a: f.a.replaceAll('[PRICE FROM]', from).replaceAll('[PRICE TO]', to) }));
+const factors = [
+  ['Floor area', 'The biggest driver. We quote from the plans, so a 180 m² single-storey home and a 320 m² two-storey home are priced on what is actually there.'],
+  ['Number of levels', 'Stairs, balustrades, landings and a second set of bathrooms add time on every level.'],
+  ['Bathrooms and kitchens', 'Wet areas take the longest: tiles, grout, glass, tapware and cabinetry. A home with four bathrooms costs more than one with two.'],
+  ['Glazing and window count', 'Floor-to-ceiling glass, stacking doors and window tracks full of plaster dust are slow, careful work.'],
+  ['Stone and polished concrete', 'Engineered stone, natural stone and polished concrete need pH-suitable products and more time to avoid etching.'],
+  ['Access', 'Lift bookings, loading docks, carparks and long carries in apartment buildings add time before the clean even starts.'],
+  ['Build stage and residue', 'A final clean on a tidy site is quicker than one on a site that skipped the rough clean. Heavy cement haze or paint overspray is quoted as residue removal.'],
+  ['After hours or weekends', 'Overnight fit-out cleans and weekend work to meet a program may carry a different rate.'],
+  ['Travel', 'Smaller jobs in outer suburbs may carry a travel charge, shown as its own line in the quote.'],
+];
+---
+<BaseLayout
+  title="Builders Clean Cost Brisbane 2026 | Builders Clean Brisbane Co."
+  description="How much does a builders clean cost in Brisbane? Price ranges by property size and stage, what changes the price, and how to get an itemised quote today."
+  schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS['kitchen'].src}
+>
+  <PageHead crumbs={crumbs} h1="Builders Clean Cost in Brisbane" eyebrow="Price guide 2026" photo="kitchen" photoAlt="Kitchen after a final builders clean in Brisbane, priced by floor area and finishes">
+    <div class="answer">
+      <p>
+        A builders clean in Brisbane usually costs {from} to {to} for a three to four bedroom home. The exact price depends on floor area,
+        levels, finishes, access and the build stage. Builders Clean Brisbane Co. is a Brisbane builders cleaning company that publishes how it
+        prices builders cleans for builders and homeowners across Greater Brisbane, and every job gets an itemised quote within {quoteTime()}.
+        Here is how we price it.
+      </p>
+    </div>
+    <CtaButtons on="teal" showWhatsapp class="mt-2" quoteLabel="Get an exact price" />
+  </PageHead>
+  <TrustStrip />
+
+  <section class="section" aria-labelledby="table-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Price list</p>
+        <h2 id="table-h">Builders clean price list (QLD): starting prices by size and stage</h2>
+        <p>Starting prices for a standard job in Brisbane. Your itemised quote confirms the exact price from your plans or photos.</p>
+      </div>
+      <div class="table-wrap" role="region" aria-label="Builders clean price table" tabindex="0">
+        <table class="price-table">
+          <caption class="sr-only">Builders clean starting prices in Brisbane by property type and cleaning stage</caption>
+          <thead><tr><th scope="col">Property</th><th scope="col">Rough clean</th><th scope="col">Final builders clean</th><th scope="col">Handover clean</th><th scope="col">Sparkle clean</th></tr></thead>
+          <tbody>
+            {PRICE_TABLE.map((r) => (
+              <tr><th scope="row">{r.property}</th><td>{p(r.rough)}</td><td>{r.final === '—' ? '—' : p(r.final)}</td><td>{r.handover === '—' ? '—' : p(r.handover)}</td><td>{r.sparkle === '—' ? '—' : p(r.sparkle)}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="small muted mt-1">Prices include GST unless stated. Specialist work (residue removal, pressure washing, carpet steam cleaning, high-level windows) is quoted separately.</p>
+
+      <h2 class="mt-3">Builders clean cost per square metre</h2>
+      <p>
+        For commercial fit-outs and large or unusual homes we price per square metre: {priceText(PRICE_PER_M2, '[PRICE PER M²]')}. The rate
+        moves with the factors below, especially glazing, finishes and after-hours work. For most homes, the per-property prices above are the
+        simpler guide.
+      </p>
+      <h2 class="mt-3">How much is a builders clean for a 4 bedroom house?</h2>
+      <p>
+        A typical four bedroom, two bathroom single-storey home in Brisbane sits in the “House, 3–4 bed” row above. Add time for a second level,
+        a third bathroom, a lot of glass or a stone-heavy kitchen. Send the plans and we will tell you exactly.
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="factors-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">What changes the price</p>
+        <h2 id="factors-h">Nine things that change a builders clean quote</h2>
+        <p>These are the questions we ask before we price a job. Answer them in the quote form and your price will be more accurate.</p>
+      </div>
+      <div class="grid grid--3">
+        {factors.map(([k, v]) => <div class="card"><h3 style="font-size:22px">{k}</h3><p>{v}</p></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="save-h">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Spend less, get more</p>
+        <h2 id="save-h">Five ways to keep your builders clean cost down</h2>
+        <ol>
+          <li><strong>Book a rough clean between trades.</strong> A final clean on a site that had a rough clean is faster, because the crew is not shifting heavy dust and debris before the detail work starts.</li>
+          <li><strong>Book after the last trade, not before.</strong> If the electrician or painter returns after the clean, you pay to have parts of it done again.</li>
+          <li><strong>Send plans and photos.</strong> An accurate scope means an accurate price, with no allowance for surprises built in.</li>
+          <li><strong>Make sure power and water are on.</strong> A crew waiting for a connection is a crew on the clock.</li>
+          <li><strong>Group the work.</strong> Builders with several homes or units on the same program get a better rate than one-off bookings.</li>
+        </ol>
+      </div>
+      <div>
+        <h2>Cheap builders clean in Brisbane: what to watch for</h2>
+        <p>
+          Marketplace listings for after-builders cleans in Brisbane often look cheap because they are priced by the hour or by a vague
+          description of the job. Before you accept a low quote, ask three questions:
+        </p>
+        <ul>
+          <li>Which rooms and surfaces are included, and is it inside cupboards and drawers?</li>
+          <li>How many hours, and how many people, are included in the price?</li>
+          <li>What happens if something is missed, or the clean takes longer than expected?</li>
+        </ul>
+        <p>
+          If the answers are vague, the price is too. A quote you can hold someone to is worth more than a number that changes on the day. Our
+          guide to <a href="/blog/builders-clean-vs-bond-clean-vs-regular-clean/">builders clean vs bond clean</a> explains why the two are priced
+          differently.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="inc-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Value, not the cheapest</p>
+        <h2 id="inc-h">What’s included at each price</h2>
+        <p>
+          A cheap builders clean in Brisbane can look good on paper and cost more in the end: a second clean, a defect on the handover list, or a
+          scratched pane of glass. Compare what you get, not just the number.
+        </p>
+      </div>
+      <Comparison />
+      <div class="grid grid--2 mt-3">
+        <div>
+          <h3>Rough clean</h3>
+          <p>Debris and packaging to the skip area, plaster dust swept and vacuumed, floors clear for the next trade. <a href="/services/builders-rough-clean-brisbane/">Rough clean details</a>.</p>
+          <h3>Final builders clean</h3>
+          <p>Every interior surface top to bottom, inside cupboards and drawers, glass, wet areas and floors, supervisor check and photo report. <a href="/services/builders-final-clean-brisbane/">Final clean details</a>.</p>
+        </div>
+        <div>
+          <h3>Handover clean</h3>
+          <p>A final clean timed to the inspection, with a pre-handover walk, a second supervisor check and a before-and-after report. <a href="/services/builders-handover-clean-brisbane/">Handover clean details</a>.</p>
+          <h3>Sparkle clean</h3>
+          <p>The final clean plus detail: tracks, hinges, cupboard interiors, streak-free glass and a last floor buff. <a href="/services/sparkle-clean-brisbane/">Sparkle clean details</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="policy-h">
+    <div class="wrap split">
+      <div>
+        <p class="eyebrow">Pricing policy</p>
+        <h2 id="policy-h">How we quote</h2>
+        <ul class="ticks">
+          <li>Itemised quote within {quoteTime()}, room by room</li>
+          <li>No hidden fees: travel, after-hours and add-ons are listed as their own lines</li>
+          <li>Variations only if the scope changes, agreed with you in writing first</li>
+          <li>Missed in-scope items re-cleaned if reported within {recleanTime()}</li>
+        </ul>
+        <p class="small muted mt-1" set:html={rich('Policy details to be confirmed by the owner before launch.{{?pricing-policy}}')} />
+      </div>
+      <div>
+        <p class="eyebrow">Builder accounts</p>
+        <h2>Volume and program pricing</h2>
+        <p>
+          Builders with regular work, estate programs or multi-dwelling projects can get account pricing based on volume and the stages they
+          need. See <a href="/for-builders/">construction cleaning for builders</a>.
+        </p>
+        <h2 class="mt-3">Post construction cleaning Brisbane price list for homeowners</h2>
+        <p>
+          Homeowners usually need one clean: a <a href="/services/new-home-builders-clean-brisbane/">new home clean</a> after the builder
+          hands over, or a <a href="/services/renovation-cleaning-brisbane/">post renovation clean</a>. Both are priced from the plans or a few
+          photos. Read the <a href="/blog/builders-clean-cost-brisbane-2026-price-guide/">2026 price guide article</a> for worked examples.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="faq-h">
+    <div class="wrap wrap--narrow">
+      <div class="section-head"><p class="eyebrow">FAQ</p><h2 id="faq-h">Builders clean cost questions</h2></div>
+      <Faq faqs={faqs} />
+      <p class="lead mt-3">The fastest way to know your builders clean cost in Brisbane is to send the plans. You get an itemised quote within {quoteTime()}.</p>
+    </div>
+  </section>
+  <CtaBand heading="Send plans for an itemised quote." />
+</BaseLayout>

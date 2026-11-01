@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import Icon from '../../components/Icon.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { CHECKLIST, CHECKLIST_PDF } from '../../data/checklist';
+import { CHECKLIST_FAQS } from '../../data/faqs';
+import { breadcrumbList } from '../../lib/schema';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Builders clean checklist', href: '/builders-clean-checklist/' }];
+---
+<BaseLayout
+  title="Builders Clean Checklist Queensland | Builders Clean Brisbane Co."
+  description="Free builders clean checklist for Queensland. Room-by-room list of what a full builders clean includes, to check a clean or brief a cleaner. Download the PDF."
+  schema={[breadcrumbList(crumbs)]}
+>
+  <PageHead crumbs={crumbs} h1="Builders Clean Checklist (Queensland)" eyebrow="Free checklist">
+    <div class="answer">
+      <p>
+        This builders clean checklist lists everything a full builders clean should include, room by room. Builders Clean Brisbane Co. is a
+        Brisbane builders cleaning company that uses this list on every final clean for builders and homeowners across Queensland’s south-east.
+        Use it to check a clean before handover, to brief a cleaner, or to compare quotes on the same scope. It is free to read, print and share.
+      </p>
+    </div>
+    <div class="btn-row mt-2 no-print">
+      <button class="btn btn--lime" type="button" data-print><Icon name="print" />Print this checklist</button>
+      <a class="btn btn--ghost-light" href="#pdf"><Icon name="download" />Get the PDF</a>
+    </div>
+  </PageHead>
+
+  <section class="section" aria-labelledby="list-h">
+    <div class="wrap">
+      <p class="print-only"><strong>Builders Clean Brisbane Co.</strong> · builderscleanbrisbaneco.com.au/builders-clean-checklist/</p>
+      <div class="section-head">
+        <p class="eyebrow">Room by room</p>
+        <h2 id="list-h">What does a builders clean include?</h2>
+        <p>Tick each item off as you walk the home. Work top to bottom in each room: ceilings first, floors last.</p>
+      </div>
+      <div class="checklist-grid">
+        {CHECKLIST.map((g) => (
+          <div class="check-group">
+            <h3>{g.room}</h3>
+            <ul class="ticks">{g.items.map((i) => <li>{i}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist no-print" aria-labelledby="use-h">
+    <div class="wrap split">
+      <div>
+        <h2 id="use-h">How to use this builders clean scope</h2>
+        <p><strong>Before handover:</strong> walk each room in daylight with this list. Check glass at an angle, run a finger along door tops and inside drawers, and look up at fans and pendants. Our <a href="/blog/pre-handover-inspection-checklist-queensland/">pre-handover inspection checklist</a> covers the build items as well.</p>
+        <p><strong>To brief a cleaner:</strong> send the list and ask them to confirm which items are in their quote. It is the easiest way to compare quotes fairly.</p>
+        <p><strong>To understand the stages:</strong> a rough clean covers only the debris and dust items; a <a href="/services/builders-final-clean-brisbane/">final builders clean</a> covers everything here; a <a href="/services/sparkle-clean-brisbane/">sparkle clean</a> adds the detail work.</p>
+      </div>
+      <div id="pdf" class="form-card">
+        <h2 style="font-size:30px">Get the PDF checklist</h2>
+        <p>Enter your email and we will take you straight to the download. We may send one follow-up about your clean; no newsletters.</p>
+        <form class="form" name="checklist-download" method="POST" action="/builders-clean-checklist/download/" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="checklist-download" />
+          <p class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+          <div><label for="cl-email">Email</label><input id="cl-email" name="email" type="email" autocomplete="email" required /></div>
+          <div>
+            <label for="cl-role">I am a…</label>
+            <select id="cl-role" name="role"><option>Homeowner</option><option>Builder or site manager</option><option>Investor or agent</option><option>Cleaner</option><option>Other</option></select>
+          </div>
+          <button class="btn btn--primary" type="submit"><Icon name="download" />Send me the PDF</button>
+        </form>
+        <p class="small muted mt-1">PDF: {CHECKLIST_PDF.replace('/downloads/', '')}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section no-print" aria-labelledby="faq-h">
+    <div class="wrap wrap--narrow">
+      <h2 id="faq-h">Builders clean checklist questions</h2>
+      <Faq faqs={CHECKLIST_FAQS} />
+      <p class="mt-2">Want us to work through the builders clean checklist for you? See <a href="/">builders clean Brisbane</a> or <a href="/contact/">get a quote</a>.</p>
+    </div>
+  </section>
+  <div class="no-print"><CtaBand /></div>
+</BaseLayout>

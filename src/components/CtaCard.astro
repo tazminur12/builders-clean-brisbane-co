@@ -1,0 +1,15 @@
+---
+/** Primary CTA block (template step 4): quote button + call (auto) + upload line. */
+import Icon from './Icon.astro';
+import CtaButtons from './CtaButtons.astro';
+import { quoteTime } from '../lib/text';
+
+interface Props { heading?: string; text?: string }
+const { heading = 'Get your itemised quote', text = `Send the suburb, the job and your date. We reply with a room-by-room quote within ${quoteTime()}.` } = Astro.props;
+---
+<aside class="cta-card" aria-label="Request a quote">
+  <h2>{heading}</h2>
+  <p>{text}</p>
+  <CtaButtons showWhatsapp />
+  <p class="cta-card__upload"><Icon name="upload" /><span><a href="/contact/#quote">Upload plans or photos</a> for a faster quote. PDFs, floor plans and phone photos all work.</span></p>
+</aside>

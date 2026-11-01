@@ -1,0 +1,19 @@
+---
+/** Accessible FAQ accordion (<details>/<summary>) + optional FAQPage schema. */
+import JsonLd from './JsonLd.astro';
+import type { Faq as FaqT } from '../data/services';
+import { rich } from '../lib/text';
+import { faqPage } from '../lib/schema';
+
+interface Props { faqs: FaqT[]; schema?: boolean; price?: string; openFirst?: boolean }
+const { faqs, schema = true, price, openFirst = false } = Astro.props;
+---
+<div class="faq">
+  {faqs.map((f, i) => (
+    <details open={openFirst && i === 0}>
+      <summary><h3 set:html={rich(f.q, { price })} /></summary>
+      <div class="faq__a"><p set:html={rich(f.a, { price })} /></div>
+    </details>
+  ))}
+</div>
+{schema && <JsonLd data={faqPage(faqs, { price })} />}

@@ -1,0 +1,33 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import Photo from '../../components/Photo.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { breadcrumbList } from '../../lib/schema';
+
+const posts = (await getCollection('blog')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Guides', href: '/blog/' }];
+---
+<BaseLayout
+  title="Builders Clean Guides Brisbane | Builders Clean Brisbane Co."
+  description="Plain-English guides on builders cleans in Queensland: who is responsible, what it costs, stages, handover checks and removing cement haze and paint overspray."
+  schema={[breadcrumbList(crumbs)]}
+>
+  <PageHead crumbs={crumbs} h1="Builders Clean Guides for Brisbane" eyebrow="Guides">
+    <p class="lead">Straight answers to the questions builders and homeowners ask us most, written by a Brisbane builders cleaning crew.</p>
+  </PageHead>
+  <section class="section">
+    <div class="wrap grid grid--3">
+      {posts.map((p) => (
+        <a class="card card--link" href={`/blog/${p.id}/`}>
+          <Photo photo={p.data.photo} alt={p.data.photoAlt} caption={false} crop={[16, 10]} sizes="(min-width: 960px) 380px, 100vw" widths={[360, 540, 720]} />
+          <h2 style="font-size:26px;margin:8px 0 0">{p.data.h1}</h2>
+          <p class="small">{p.data.summary}</p>
+          <span class="card__more" aria-hidden="true">Read the guide</span>
+        </a>
+      ))}
+    </div>
+  </section>
+  <CtaBand />
+</BaseLayout>

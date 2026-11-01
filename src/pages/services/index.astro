@@ -1,0 +1,78 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import CtaButtons from '../../components/CtaButtons.astro';
+import TrustStrip from '../../components/TrustStrip.astro';
+import ServiceCards from '../../components/ServiceCards.astro';
+import StageDiagram from '../../components/StageDiagram.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { PHOTOS } from '../../data/photos';
+import { SERVICES, serviceUrl } from '../../data/services';
+import { breadcrumbList } from '../../lib/schema';
+import { abs, quoteTime } from '../../lib/text';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Services', href: '/services/' }];
+const list = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Builders cleaning services in Brisbane',
+  itemListElement: SERVICES.map((s, i) => ({ '@type': 'ListItem', position: i + 1, name: s.name, url: abs(serviceUrl(s.slug)) })),
+};
+---
+<BaseLayout
+  title="Builders Cleaning Services Brisbane | Builders Clean Brisbane Co."
+  description="Builders cleaning services in Brisbane: rough, final, handover and sparkle cleans, renovations, apartments, fit-outs and residue removal. Get an itemised quote."
+  schema={[breadcrumbList(crumbs), list]}
+  ogImage={PHOTOS['living-dining'].src}
+>
+  <PageHead crumbs={crumbs} h1="Builders Cleaning Services in Brisbane" eyebrow="17 services" photo="living-dining">
+    <div class="answer">
+      <p>
+        Builders Clean Brisbane Co. is a Brisbane builders cleaning company that provides 17 builders cleaning services for builders,
+        developers, shopfitters and homeowners across Brisbane, Moreton Bay, Logan, Ipswich and the Redlands. Every service is quoted room by
+        room within {quoteTime()}, booked to your program and finished with a supervisor check and photo report. Choose a build stage, a
+        property type, a residue problem or a commercial service below.
+      </p>
+    </div>
+    <CtaButtons on="teal" showWhatsapp class="mt-2" />
+  </PageHead>
+  <TrustStrip />
+
+  <section class="section section--soft" aria-labelledby="stages-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Start here</p>
+        <h2 id="stages-h">Builders cleaning services by stage</h2>
+        <p>Most builds need more than one clean. The <a href="/services/post-construction-cleaning-brisbane/">post construction cleaning</a> page explains how the stages fit together.</p>
+      </div>
+      <StageDiagram />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="all-h">
+    <div class="wrap">
+      <h2 id="all-h" class="sr-only">All builders cleaning services</h2>
+      <ServiceCards />
+      <hr class="rule mb-3" />
+      <div class="split">
+        <div>
+          <h2>Not sure which clean you need?</h2>
+          <p>
+            Tell us what stage the build is at and what you can see: dust, stickers, haze, paint, or a home that just needs to be ready for the
+            keys. We will recommend the right service and explain why in the quote. You can also compare scopes on our
+            <a href="/builders-clean-checklist/">builders clean checklist</a> or read <a href="/blog/rough-clean-vs-final-clean-vs-sparkle-clean/">rough vs final vs sparkle clean</a>.
+          </p>
+        </div>
+        <div>
+          <h2>What does it cost?</h2>
+          <p>
+            Every service is quoted on floor area, levels, glazing, finishes, access and build stage. The
+            <a href="/builders-clean-cost-brisbane/">builders clean price guide</a> sets out how we price, and the
+            <a href="/contact/">quote form</a> gets you an exact, itemised price.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <CtaBand />
+</BaseLayout>

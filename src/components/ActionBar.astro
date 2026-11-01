@@ -1,0 +1,11 @@
+---
+/** Sticky mobile action bar: Call (or Quote) · WhatsApp (if set) · Get quote. Tap targets ≥ 48px. */
+import Icon from './Icon.astro';
+import { hasPhone, telHref, hasWhatsapp, whatsappHref } from '../config/site';
+---
+<nav class="action-bar on-teal" aria-label="Quick contact">
+  {hasPhone && <a class="btn btn--ghost-light" href={telHref}><Icon name="phone" />Call</a>}
+  {hasWhatsapp && <a class="btn btn--ghost-light" href={whatsappHref} rel="noopener"><Icon name="whatsapp" />WhatsApp</a>}
+  {!hasPhone && !hasWhatsapp && <a class="btn btn--ghost-light" href="/builders-clean-cost-brisbane/">Prices</a>}
+  <a class="btn btn--lime" href="/contact/#quote"><Icon name="quote" />{hasPhone ? 'Quote' : 'Get a free quote'}</a>
+</nav>

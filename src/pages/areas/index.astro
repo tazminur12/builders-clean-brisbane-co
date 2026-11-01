@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import CtaButtons from '../../components/CtaButtons.astro';
+import TrustStrip from '../../components/TrustStrip.astro';
+import MapFacade from '../../components/MapFacade.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { REGIONS, SUBURBS, AREA_FAQ_BANK, areaUrl } from '../../data/areas';
+import { AREAS_HUB_FAQ } from '../../data/faqs';
+import { PHOTOS } from '../../data/photos';
+import { breadcrumbList } from '../../lib/schema';
+import { quoteTime } from '../../lib/text';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Areas', href: '/areas/' }];
+---
+<BaseLayout
+  title="Builders Clean Service Areas Brisbane | Builders Clean Brisbane Co."
+  description="Builders clean and post construction cleaning across Brisbane, Moreton Bay, Logan, Ipswich and the Redlands. Find your suburb and request an itemised quote."
+  schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS['new-home'].src}
+>
+  <PageHead crumbs={crumbs} h1="Builders Clean Service Areas Across Brisbane" eyebrow="Where we work">
+    <div class="answer">
+      <p>
+        Builders Clean Brisbane Co. is a Brisbane builders cleaning company that does builders cleans and post construction cleaning for
+        builders and homeowners across five regions: Brisbane City, Moreton Bay, Logan, Ipswich and the Redlands. We cover the inner city and
+        the growth corridors where most new homes are being handed over. Quotes come back within {quoteTime()}, and any travel charge for
+        smaller jobs in outer suburbs is shown in the quote before you book.
+      </p>
+    </div>
+    <CtaButtons on="teal" showWhatsapp class="mt-2" />
+  </PageHead>
+  <TrustStrip />
+
+  <section class="section" aria-labelledby="map-h">
+    <div class="wrap split split--center">
+      <div>
+        <p class="eyebrow">Service area</p>
+        <h2 id="map-h">Builders clean Brisbane service areas</h2>
+        <p>
+          We are a service-area business: we come to the job, so there is no shopfront to visit. Our crews work from the inner city to the
+          northern, southern and western growth corridors.
+        </p>
+        <p><strong>Not sure if we come to you?</strong> Send the suburb and the job and we will confirm.</p>
+      </div>
+      <MapFacade />
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="regions-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Regions</p>
+        <h2 id="regions-h">Five regions, fifteen suburb pages</h2>
+      </div>
+      <div class="grid grid--3">
+        {REGIONS.map((r) => (
+          <div class="card">
+            <h3><a href={areaUrl(r.slug)}>Builders clean {r.name}</a></h3>
+            <p class="small">{r.blurb}</p>
+            {r.suburbs.length > 0 && (
+              <ul class="chips mt-1">
+                {SUBURBS.filter((s) => s.region === r.slug).map((s) => <li><a href={areaUrl(s.slug)}>{s.name}</a></li>)}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
+      <div class="mt-3 wrap--narrow" style="padding:0">
+        <h2>Growth corridors we serve</h2>
+        <p>
+          Most new homes around Brisbane are being built in master-planned estates to the north, south and west. We have pages for the growth
+          suburbs where we see the most handovers: <a href="/areas/north-lakes/">North Lakes</a>, <a href="/areas/narangba/">Narangba</a> and
+          <a href="/areas/caboolture/">Caboolture</a> in Moreton Bay; <a href="/areas/springfield/">Springfield</a> and
+          <a href="/areas/ripley/">Ripley</a> in Ipswich; and <a href="/areas/yarrabilba/">Yarrabilba</a>,
+          <a href="/areas/park-ridge/">Park Ridge</a> and <a href="/areas/flagstone/">Flagstone</a> in Logan. Estate builders can send a lot
+          list and handover dates and we will plan the cleans in sequence.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="faq-h">
+    <div class="wrap wrap--narrow">
+      <h2 id="faq-h">Service area questions</h2>
+      <Faq faqs={[AREAS_HUB_FAQ, ...AREA_FAQ_BANK]} />
+    </div>
+  </section>
+  <CtaBand />
+</BaseLayout>

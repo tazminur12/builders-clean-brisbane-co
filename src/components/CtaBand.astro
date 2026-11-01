@@ -1,0 +1,32 @@
+---
+/** Final CTA band + quote form (template step 14). Provides the #quote anchor. */
+import QuoteForm from './QuoteForm.astro';
+import CtaButtons from './CtaButtons.astro';
+import { quoteTime, recleanTime } from '../lib/text';
+
+interface Props { heading?: string; text?: string; job?: string; suburb?: string; who?: 'builder' | 'homeowner' }
+const {
+  heading = 'Send us your plans. Get your itemised quote.',
+  text = 'Tell us the suburb, the job and your date. Upload plans or photos if you have them.',
+  job, suburb, who,
+} = Astro.props;
+---
+<section class="cta-band section on-teal" id="quote" aria-labelledby="quote-h">
+  <div class="wrap cta-band__grid">
+    <div class="cta-band__copy">
+      <p class="eyebrow">Free quote</p>
+      <h2 id="quote-h">{heading}</h2>
+      <p>{text}</p>
+      <ul class="cta-band__list">
+        <li>Itemised quote within {quoteTime()}</li>
+        <li>Booked around your handover, settlement or move-in date</li>
+        <li>Supervisor check and photo report on every clean</li>
+        <li>Missed in-scope items re-cleaned if reported within {recleanTime()}</li>
+      </ul>
+      <CtaButtons on="teal" showWhatsapp quoteHref="/contact/" quoteLabel="Quote page" class="no-print" />
+    </div>
+    <div class="form-card">
+      <QuoteForm job={job} suburb={suburb} who={who} />
+    </div>
+  </div>
+</section>

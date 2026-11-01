@@ -1,0 +1,144 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import CtaButtons from '../components/CtaButtons.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import StageDiagram from '../components/StageDiagram.astro';
+import Steps from '../components/Steps.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { BUILDER_FAQS } from '../data/faqs';
+import { PHOTOS } from '../data/photos';
+import { SITE, isSet } from '../config/site';
+import { breadcrumbList } from '../lib/schema';
+import { quoteTime, insuranceText, recleanTime, rich } from '../lib/text';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'For builders', href: '/for-builders/' }];
+const docs = [
+  ['Public liability insurance', `Certificate of currency, ${insuranceText()}.`],
+  ['White cards', 'General construction induction cards for every crew member on site.{{?credentials}}'],
+  ['Police checks', 'Current police checks for every crew member.{{?credentials}}'],
+  ['SWMS', 'Safe Work Method Statements for cleaning tasks, sent before day one.{{?credentials}}'],
+  ['Capability statement', isSet(SITE.capabilityPdf) ? `[Download the capability statement](${SITE.capabilityPdf})` : 'Capability statement PDF [TO BE CREATED BY OWNER].'],
+  ['Site inductions', 'We complete your site induction before the first shift.'],
+];
+const work = [
+  ['Rough cleans', 'builders-rough-clean-brisbane', 'Between trades, booked into the program like any other trade.'],
+  ['Final cleans', 'builders-final-clean-brisbane', 'After the last trade, to handover standard, with a supervisor walk.'],
+  ['Handover cleans', 'builders-handover-clean-brisbane', 'Timed to practical completion so cleaning never appears on the defects list.'],
+  ['Apartments', 'apartment-handover-cleaning-brisbane', 'Units in settlement order, one checklist, one report per unit.'],
+  ['Townhouses and duplexes', 'townhouse-duplex-builders-clean-brisbane', 'Multi-dwelling programs with a date for every dwelling.'],
+  ['Display homes', 'display-home-cleaning-brisbane', 'Recurring schedules before opening or after close.'],
+  ['Commercial fit-outs', 'commercial-fit-out-cleaning-brisbane', 'After hours and overnight so the tenant trades on time.'],
+  ['Site clean-up', 'construction-site-clean-up-brisbane', 'Regular or one-off clean-ups to keep live sites safe.'],
+];
+---
+<BaseLayout
+  title="Construction Cleaning Contractor | Builders Clean Brisbane Co."
+  description="Construction cleaning contractor in Brisbane for builders and developers. Staged programs, SWMS and insurance on request, photo reports. Request a quote."
+  schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS['bathroom-handover'].src}
+>
+  <PageHead crumbs={crumbs} h1="Construction Cleaning Contractor in Brisbane" eyebrow="For builders and developers" photo="bathroom-handover" photoAlt="Bathroom ready for client handover after a construction clean in Brisbane">
+    <div class="answer">
+      <p>
+        Builders Clean Brisbane Co. is a Brisbane construction cleaning contractor that does rough, final and handover cleans for residential
+        builders, developers, project managers and shopfitters across Brisbane, Moreton Bay, Logan and Ipswich. We book into your program,
+        move when trades run late, send documents before day one, and finish every clean with a supervisor sign-off and a photo report your
+        client can see. Itemised quotes arrive within {quoteTime()}, and account pricing is available for regular work.
+      </p>
+    </div>
+    <CtaButtons on="teal" showWhatsapp quoteLabel="Request a builder quote" class="mt-2" />
+  </PageHead>
+  <TrustStrip />
+
+  <section class="section section--mist" aria-labelledby="pains-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">What builders tell us</p>
+        <h2 id="pains-h">A builders cleaning subcontractor you don’t have to chase</h2>
+      </div>
+      <ul class="pains">
+        <li>The cleaner didn’t turn up and handover is tomorrow.</li>
+        <li>Previous cleaners took three days; we needed it done in one.</li>
+        <li>Residue the client finds after handover becomes my problem.</li>
+      </ul>
+      <p class="lead" style="max-width:72ch">
+        Reliability is what you pay a cleaning contractor for. One contact who answers the phone, a crew sized to the job, a checklist and a
+        supervisor walk, and a photo report filed before you ask. If the client finds an in-scope item within {recleanTime()}, we come back.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="what-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">What we do for builders</p>
+        <h2 id="what-h">Construction cleaning across the program</h2>
+      </div>
+      <div class="grid grid--4">
+        {work.map(([h, slug, p]) => (
+          <a class="card card--link" href={`/services/${slug}/`}><h3 style="font-size:22px">{h}</h3><p class="small">{p}</p><span class="card__more" aria-hidden="true">Details</span></a>
+        ))}
+      </div>
+      <h2 class="mt-3">How we plan the program</h2>
+      <p style="max-width:72ch">
+        Send the construction program or the key dates. We book each clean against the trade before it, confirm in writing, and send a reminder
+        the day before. When the plasterer runs over or the handover date moves, tell one contact and we re-book. Staged projects get a clean
+        plan per stage, and multi-dwelling jobs get a date per dwelling.
+      </p>
+      <StageDiagram />
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="docs-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Compliance</p>
+        <h2 id="docs-h">Builders cleaner, white card and insured: documents before day one</h2>
+        <p>No paperwork, no site access. We send what your site needs before the first shift. Only documents we hold are listed here.</p>
+      </div>
+      <div class="grid grid--3">
+        {docs.map(([h, p]) => <div class="card"><h3 style="font-size:22px"><Icon name="shield" class="" /> {h}</h3><p set:html={rich(p)} /></div>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--teal on-teal" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="section-head"><p class="eyebrow">Sign-off</p><h2 id="how-h">Supervisor sign-off and photo reports</h2>
+        <p>Every clean ends the same way: a supervisor walks the job against the checklist, fixes anything missed on the spot, and sends a before-and-after photo report you can forward to your client.</p></div>
+      <Steps />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="acc-h">
+    <div class="wrap split">
+      <div>
+        <h2 id="acc-h">Account pricing for builders</h2>
+        <p>
+          Builders with regular work get program pricing based on volume and the stages they need. Estate builders can send a lot list;
+          developers can send a unit schedule. We quote per home, per dwelling or per unit, so the numbers are easy to allocate to each job.
+        </p>
+        <p>See how we price on the <a href="/builders-clean-cost-brisbane/">builders clean cost guide</a>, or go back to <a href="/">builders clean Brisbane</a>.</p>
+      </div>
+      <div>
+        <h2>SWMS cleaning contractor for commercial sites</h2>
+        <p>
+          For shopfitters and commercial builders we work after hours, follow site rules and provide SWMS on request. See
+          <a href="/services/commercial-fit-out-cleaning-brisbane/">commercial fit-out cleaning</a> and
+          <a href="/services/construction-site-clean-up-brisbane/">construction site clean-up</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--soft" aria-labelledby="faq-h">
+    <div class="wrap wrap--narrow">
+      <h2 id="faq-h">Questions from builders</h2>
+      <Faq faqs={BUILDER_FAQS} />
+    </div>
+  </section>
+  <CtaBand heading="Send the program. Get a builder quote." text="Include your business name, ABN, the site contact, the plans and the handover date." who="builder" />
+</BaseLayout>

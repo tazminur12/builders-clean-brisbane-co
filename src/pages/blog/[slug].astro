@@ -1,0 +1,62 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHead from '../../components/PageHead.astro';
+import Faq from '../../components/Faq.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { serviceBySlug, serviceUrl } from '../../data/services';
+import { areaBySlug, areaUrl } from '../../data/areas';
+import { PHOTOS } from '../../data/photos';
+import { breadcrumbList, BUSINESS_ID } from '../../lib/schema';
+import { abs } from '../../lib/text';
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props as { post: CollectionEntry<'blog'> };
+const d = post.data;
+const { Content } = await render(post);
+const url = `/blog/${post.id}/`;
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Guides', href: '/blog/' }, { label: d.h1, href: url }];
+const services = d.services.map(serviceBySlug);
+const area = areaBySlug(d.area);
+const fmt = (dt: Date) => dt.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+const article = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: d.h1,
+  description: d.description,
+  datePublished: d.pubDate.toISOString().slice(0, 10),
+  dateModified: (d.updated ?? d.pubDate).toISOString().slice(0, 10),
+  mainEntityOfPage: abs(url),
+  inLanguage: 'en-AU',
+  author: { '@id': BUSINESS_ID },
+  publisher: { '@id': BUSINESS_ID },
+  image: abs('/brand/og-image-1200x630.jpg'),
+};
+---
+<BaseLayout title={d.title} description={d.description} schema={[breadcrumbList(crumbs), article]} ogImage={PHOTOS[d.photo].src} ogType="article">
+  <PageHead crumbs={crumbs} h1={d.h1} eyebrow="Guide" photo={d.photo} photoAlt={d.photoAlt}>
+    <p class="lead">{d.summary}</p>
+    <p class="small" style="color:var(--c-on-teal-sub)">By the Builders Clean Brisbane Co. team · <time datetime={d.pubDate.toISOString().slice(0, 10)}>{fmt(d.pubDate)}</time></p>
+  </PageHead>
+  <article class="section">
+    <div class="wrap prose">
+      <Content />
+      <aside class="card mt-3" aria-label="Related">
+        <h2 style="font-size:26px;margin:0">Related services</h2>
+        <ul class="link-list">
+          {services.map((s) => <li><a href={serviceUrl(s.slug)}>{s.name} in Brisbane</a></li>)}
+          <li><a href={areaUrl(area.slug)}>Builders clean {area.name}</a></li>
+          <li><a href="/contact/">Get a builders clean quote</a></li>
+        </ul>
+      </aside>
+      <h2>Questions</h2>
+      <Faq faqs={d.faqs} />
+    </div>
+  </article>
+  <CtaBand />
+</BaseLayout>

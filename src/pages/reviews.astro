@@ -1,0 +1,84 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import Photo from '../components/Photo.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { REVIEWS } from '../data/reviews';
+import { SITE, hasReviewUrl, isSet } from '../config/site';
+import type { PhotoKey } from '../data/photos';
+import { breadcrumbList } from '../lib/schema';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Reviews', href: '/reviews/' }];
+const gallery: PhotoKey[] = ['polished-concrete', 'bathroom-handover', 'kitchen', 'stairs', 'new-home', 'pool'];
+---
+<BaseLayout
+  title="Builders Clean Reviews Brisbane | Builders Clean Brisbane Co."
+  description="Reviews of Builders Clean Brisbane Co. from Brisbane builders and homeowners. Read real Google reviews, see our work and leave a review after your clean."
+  schema={[breadcrumbList(crumbs)]}
+>
+  <PageHead crumbs={crumbs} h1="Builders Clean Reviews in Brisbane" eyebrow="Reviews">
+    <div class="answer">
+      <p>
+        Looking for the best builders clean in Brisbane? Read what our customers say, and look at the work. Builders Clean Brisbane Co. is a
+        Brisbane builders cleaning company that cleans for builders and homeowners across Brisbane, and we only ever show real reviews from
+        real jobs. We reply to every review within 48 hours.
+      </p>
+    </div>
+    <div class="btn-row mt-2">
+      {hasReviewUrl
+        ? <a class="btn btn--lime" href={SITE.reviewUrl} rel="noopener"><Icon name="star" />Leave us a Google review</a>
+        : <a class="btn btn--lime" href="/contact/"><Icon name="star" />Leave us a Google review</a>}
+      {isSet(SITE.gbpUrl) && <a class="btn btn--ghost-light" href={SITE.gbpUrl} rel="noopener">Read our Google reviews</a>}
+    </div>
+    {!hasReviewUrl && <p class="small mt-1" style="color:var(--c-on-teal-sub)">[GOOGLE REVIEW LINK — TBC]</p>}
+  </PageHead>
+
+  {REVIEWS.length > 0 ? (
+    <section class="section" aria-labelledby="list-h">
+      <div class="wrap">
+        <h2 id="list-h">What customers say</h2>
+        <div class="grid grid--3">
+          {REVIEWS.map((r) => (
+            <figure class="card">
+              <p><span role="img" aria-label={`${r.rating} out of 5 stars`}>{'★'.repeat(r.rating)}</span></p>
+              <blockquote style="margin:0"><p>{r.text}</p></blockquote>
+              <figcaption class="small muted">{r.author}{r.jobType ? ` · ${r.jobType}` : ''}{r.suburb ? `, ${r.suburb}` : ''} · {r.date}</figcaption>
+            </figure>
+          ))}
+        </div>
+      </div>
+    </section>
+  ) : (
+    <section class="section" aria-labelledby="new-h">
+      <div class="wrap wrap--narrow">
+        <h2 id="new-h">Had a clean with us? Tell Brisbane about it.</h2>
+        <p>
+          We are a new Brisbane business, so every review counts. When you write one, it helps to mention the type of clean (final clean,
+          handover clean, renovation clean) and the suburb. Other builders and homeowners search for exactly that.
+        </p>
+        <p>Until our reviews build up, the best way to judge us is the work itself. These are real Brisbane jobs.</p>
+      </div>
+    </section>
+  )}
+
+  <section class="section section--mist" aria-labelledby="gal-h">
+    <div class="wrap">
+      <h2 id="gal-h">Our work</h2>
+      <div class="photo-grid photo-grid--3">{gallery.map((k) => <Photo photo={k} sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw" />)}</div>
+      <p class="mt-2"><a href="/our-work/">See all builders clean photos</a></p>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="how-h">
+    <div class="wrap wrap--narrow">
+      <h2 id="how-h">How we handle reviews</h2>
+      <p>
+        We reply to every Google review within 48 hours, good or bad, and we name the job so readers know what it relates to. If something was
+        not right, we would rather hear it directly: tell us within the re-clean window and we come back to fix in-scope items. Read how we work on
+        our <a href="/about/">about page</a> or compare us on the <a href="/builders-clean-cost-brisbane/">price guide</a>.
+      </p>
+    </div>
+  </section>
+  <CtaBand />
+</BaseLayout>

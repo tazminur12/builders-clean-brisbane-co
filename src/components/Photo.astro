@@ -1,0 +1,36 @@
+---
+/** Real job photo via <Picture>: AVIF + WebP + JPG fallback, explicit size, lazy unless `eager`. */
+import { Picture } from 'astro:assets';
+import { PHOTOS, type PhotoKey } from '../data/photos';
+
+interface Props {
+  photo: PhotoKey;
+  alt?: string;
+  caption?: string | false;
+  eager?: boolean;
+  sizes?: string;
+  widths?: number[];
+  class?: string;
+  /** Aspect crop, e.g. [4,3]. Defaults to the original square. */
+  crop?: [number, number];
+}
+const { photo, alt, caption, eager = false, sizes = '(min-width: 960px) 560px, 100vw', widths = [360, 540, 720, 860, 1080], class: cls, crop } = Astro.props;
+const p = PHOTOS[photo];
+const w = 1080;
+const h = crop ? Math.round((w * crop[1]) / crop[0]) : 1080;
+const cap = caption === false ? null : caption ?? p.caption;
+const pic = (
+  // fit/position only matter when cropping
+  { src: p.src, alt: alt ?? p.alt, widths, sizes, width: w, height: h, formats: ['avif', 'webp'] as ('avif' | 'webp')[], fallbackFormat: 'jpg' as const, quality: eager ? 45 : 58,
+    loading: eager ? ('eager' as const) : ('lazy' as const), fetchpriority: eager ? ('high' as const) : undefined, decoding: eager ? ('sync' as const) : ('async' as const),
+    fit: 'cover' as const, position: 'center' as const }
+);
+---
+{cap ? (
+  <figure class:list={['photo', cls]}>
+    <Picture {...pic} />
+    <figcaption>{cap}</figcaption>
+  </figure>
+) : (
+  <Picture {...pic} class={cls} />
+)}

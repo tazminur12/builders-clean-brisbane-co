@@ -1,0 +1,23 @@
+---
+/** Rough → final → handover/sparkle stage diagram. Used where a page has no stage photo. */
+import { serviceUrl } from '../data/services';
+interface Props { current?: 'rough' | 'final' | 'handover' | 'sparkle' | 'all'; headingLevel?: 'h3' }
+const { current } = Astro.props;
+const stages = [
+  { key: 'rough', n: 'Stage 1 · during the build', h: 'Rough clean', p: 'Between trades. Debris, packaging and plaster dust cleared so the next trade starts clean.', href: serviceUrl('builders-rough-clean-brisbane') },
+  { key: 'final', n: 'Stage 2 · after the last trade', h: 'Final clean', p: 'Every surface, cupboard and window taken from site to handover standard.', href: serviceUrl('builders-final-clean-brisbane') },
+  { key: 'handover', n: 'Stage 3 · inspection or move-in', h: 'Handover or sparkle clean', p: 'The detailed last pass before the inspection, a sale or move-in day.', href: current === 'sparkle' ? serviceUrl('sparkle-clean-brisbane') : serviceUrl('builders-handover-clean-brisbane') },
+];
+const isCur = (k: string) => current === k || (k === 'handover' && current === 'sparkle');
+---
+<ol class="stages">
+  {stages.map((s) => (
+    <li>
+      <a class:list={['stage', { 'stage--current': isCur(s.key) }]} href={s.href} aria-current={isCur(s.key) ? 'page' : undefined}>
+        <span class="stage__num">{s.n}</span>
+        <h3>{s.h}</h3>
+        <p>{s.p}</p>
+      </a>
+    </li>
+  ))}
+</ol>

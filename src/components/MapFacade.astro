@@ -1,0 +1,28 @@
+---
+/** Click-to-load Google Map facade: no third-party requests until the visitor asks for the map. */
+import { MAP_EMBED } from '../config/site';
+interface Props { title?: string }
+const { title = 'Map of the Builders Clean Brisbane Co. service area' } = Astro.props;
+---
+<div class="map-wrap">
+<div class="map">
+  <svg class="map__art" viewBox="0 0 800 500" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+    <rect width="800" height="500" fill="#0D3B3A" />
+    <g stroke="#2C5654" stroke-width="1" opacity=".7">
+      {Array.from({ length: 16 }, (_, i) => <line x1={i * 55} y1="0" x2={i * 55} y2="500" />)}
+      {Array.from({ length: 10 }, (_, i) => <line x1="0" y1={i * 55} x2="800" y2={i * 55} />)}
+    </g>
+    <path d="M560 0 C 600 120, 690 160, 700 260 S 760 420, 800 470 L800 0Z" fill="#0A2F2E" />
+    <path d="M150 300 C 230 260, 300 300, 380 250 S 520 230, 600 180" fill="none" stroke="#B8E62E" stroke-width="5" opacity=".35" />
+    <g font-family="Inter, Arial, sans-serif" font-size="17" fill="#FFFFFF" font-weight="600">
+      <circle cx="470" cy="70" r="7" fill="#B8E62E" /><text x="484" y="76">Moreton Bay</text>
+      <circle cx="400" cy="230" r="10" fill="#B8E62E" /><text x="418" y="236">Brisbane City</text>
+      <circle cx="170" cy="290" r="7" fill="#B8E62E" /><text x="40" y="320">Ipswich</text>
+      <circle cx="420" cy="380" r="7" fill="#B8E62E" /><text x="436" y="386">Logan</text>
+      <circle cx="620" cy="280" r="7" fill="#B8E62E" /><text x="600" y="315">Redlands</text>
+    </g>
+  </svg>
+  <button type="button" class="btn btn--lime map__btn" data-map-src={MAP_EMBED} data-map-title={title}>Load Google Map</button>
+</div>
+<p class="map__note">The map loads from Google only when you click.</p>
+</div>

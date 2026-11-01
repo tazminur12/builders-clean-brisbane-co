@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import { quoteTime } from '../lib/text';
+---
+<BaseLayout title="Thanks, Your Quote Request Is In | Builders Clean Brisbane Co." description="Thanks for your builders clean quote request. We will reply with an itemised quote shortly. In the meantime, read our price guide and builders clean checklist." noindex>
+  <PageHead h1="Thanks, we have your request" eyebrow="Quote request received">
+    <p class="lead">We will reply with an itemised quote within {quoteTime()}. If your handover date changes in the meantime, just reply to our email.</p>
+    <p class="mt-2"><a href="/builders-clean-checklist/" style="color:var(--c-lime)">Builders clean checklist</a> · <a href="/builders-clean-cost-brisbane/" style="color:var(--c-lime)">Price guide</a> · <a href="/" style="color:var(--c-lime)">Home</a></p>
+  </PageHead>
+</BaseLayout>

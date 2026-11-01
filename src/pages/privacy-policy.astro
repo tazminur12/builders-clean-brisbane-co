@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import { SITE, hasEmail } from '../config/site';
+import { breadcrumbList } from '../lib/schema';
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Privacy policy', href: '/privacy-policy/' }];
+---
+<BaseLayout title="Privacy Policy | Builders Clean Brisbane Co." description="How Builders Clean Brisbane Co. collects, uses and stores the details you send through our quote form or by phone, and how to ask us to update or delete them." schema={[breadcrumbList(crumbs)]}>
+  <PageHead crumbs={crumbs} h1="Privacy policy" />
+  <section class="section"><div class="wrap prose">
+    <p>This policy explains how {SITE.name} ({SITE.legalName}) handles personal information. Last updated: November 2026.</p>
+    <h2>What we collect</h2>
+    <p>We collect only what you send us through the quote form, the checklist download form, by phone or by email: your name, contact details, the job address or suburb, dates, notes and any plans or photos you upload.</p>
+    <h2>How we use it</h2>
+    <p>We use your details to quote, book and complete your clean, to send your photo report, and to follow up on that job. We do not sell your information or add you to a mailing list.</p>
+    <h2>Where it is stored</h2>
+    <p>Our website is hosted by Netlify, and form submissions (including uploaded files) are stored by Netlify Forms. We may keep job records, including photo reports, for our business records.</p>
+    <h2>Cookies and tracking</h2>
+    <p>This website does not set advertising cookies. If you choose to load the Google Map, Google may set its own cookies under Google’s privacy policy.</p>
+    <h2>Access and correction</h2>
+    <p>You can ask to see, correct or delete the personal information we hold about you{hasEmail ? <> by emailing <a href={`mailto:${SITE.email}`}>{SITE.email}</a></> : <> through our <a href="/contact/">contact form</a></>}.</p>
+  </div></section>
+</BaseLayout>

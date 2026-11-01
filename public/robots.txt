@@ -1,0 +1,7 @@
+# Builders Clean Brisbane Co.
+User-agent: *
+Allow: /
+Disallow: /thank-you/
+Disallow: /builders-clean-checklist/download/
+
+Sitemap: https://www.builderscleanbrisbaneco.com.au/sitemap-index.xml

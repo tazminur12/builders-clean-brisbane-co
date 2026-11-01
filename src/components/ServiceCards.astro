@@ -1,0 +1,23 @@
+---
+import { SERVICES, SERVICE_GROUPS, serviceUrl, type ServiceGroup } from '../data/services';
+interface Props { headingLevel?: 'h2' | 'h3'; showBlurb?: boolean }
+const { headingLevel = 'h3', showBlurb = true } = Astro.props;
+const groups = Object.keys(SERVICE_GROUPS) as ServiceGroup[];
+const H = headingLevel;
+const Sub = headingLevel === 'h2' ? 'h3' : 'h4';
+---
+{groups.map((g) => (
+  <div class="mb-3">
+    <H style="margin-bottom:6px">{SERVICE_GROUPS[g].label}</H>
+    {showBlurb && <p class="muted">{SERVICE_GROUPS[g].blurb}</p>}
+    <div class="grid grid--3 mt-1">
+      {SERVICES.filter((s) => s.group === g).map((s) => (
+        <a class="card card--link" href={serviceUrl(s.slug)}>
+          <Sub style="margin:0;font-size:22px;font-weight:600">{s.name}</Sub>
+          <p>{s.summary}</p>
+          <span class="card__more" aria-hidden="true">Details</span>
+        </a>
+      ))}
+    </div>
+  </div>
+))}

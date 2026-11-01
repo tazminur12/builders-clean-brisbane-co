@@ -1,0 +1,114 @@
+---
+import '../styles/global.css';
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import ActionBar from '../components/ActionBar.astro';
+import JsonLd from '../components/JsonLd.astro';
+import { SITE } from '../config/site';
+import { localBusiness } from '../lib/schema';
+import { abs } from '../lib/text';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Page-specific JSON-LD (Service, FAQPage, BreadcrumbList…). LocalBusiness is added sitewide. */
+  schema?: Record<string, unknown>[];
+  /** Hero photo → per-page OG image (cropped to 1200×630). Falls back to the brand OG image. */
+  ogImage?: ImageMetadata;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  /** Override canonical path (defaults to the current path, without query string). */
+  canonicalPath?: string;
+  /** Omit the canonical tag (404 page). */
+  noCanonical?: boolean;
+}
+
+const { title, description, schema = [], ogImage, ogType = 'website', noindex = false, canonicalPath, noCanonical = false } = Astro.props;
+
+// Canonical is always the clean path: UTM and any other query params never appear.
+const canonical = abs(canonicalPath ?? Astro.url.pathname);
+
+let og = abs('/brand/og-image-1200x630.jpg');
+if (ogImage) {
+  const img = await getImage({ src: ogImage, width: 1200, height: 630, fit: 'cover', position: 'center', format: 'jpg', quality: 80 });
+  og = abs(img.src);
+}
+---
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!noCanonical && <link rel="canonical" href={canonical} />}
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <link rel="preload" href="/fonts/barlow-condensed-extrabold.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0D3B3A" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:locale" content="en_AU" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={og} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={og} />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <JsonLd data={[localBusiness(), ...schema]} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <ActionBar />
+    <script is:inline>
+      // Mobile menu (≈0.6 KB). Accordions are native <details>; the map facade is handled here too.
+      (function () {
+        var t = document.querySelector('[data-nav-toggle]');
+        var n = document.getElementById('site-nav');
+        if (t && n) {
+          var set = function (open) {
+            t.setAttribute('aria-expanded', String(open));
+            n.setAttribute('data-open', String(open));
+            t.querySelector('span').textContent = open ? 'Close' : 'Menu';
+          };
+          t.addEventListener('click', function () { set(t.getAttribute('aria-expanded') !== 'true'); });
+          document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && t.getAttribute('aria-expanded') === 'true') { set(false); t.focus(); } });
+        }
+        document.querySelectorAll('[data-map-src]').forEach(function (b) {
+          b.addEventListener('click', function () {
+            var f = document.createElement('iframe');
+            f.src = b.getAttribute('data-map-src');
+            f.title = b.getAttribute('data-map-title') || 'Map';
+            f.loading = 'lazy';
+            f.referrerPolicy = 'no-referrer-when-downgrade';
+            f.allowFullscreen = true;
+            var m = b.closest('.map');
+            m.appendChild(f);
+            b.remove();
+            f.focus();
+          });
+        });
+        document.querySelectorAll('[data-print]').forEach(function (b) {
+          b.addEventListener('click', function () { window.print(); });
+        });
+      })();
+    </script>
+  </body>
+</html>

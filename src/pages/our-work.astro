@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import Photo from '../components/Photo.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { PHOTOS, PHOTO_GROUPS, type PhotoKey } from '../data/photos';
+import { breadcrumbList } from '../lib/schema';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Our work', href: '/our-work/' }];
+const keys = Object.keys(PHOTOS) as PhotoKey[];
+const groups = Object.entries(PHOTO_GROUPS);
+const links: Record<PhotoKey, [string, string]> = {
+  'polished-concrete': ['/services/floor-cleaning-after-construction-brisbane/', 'Floor cleaning after construction'],
+  'living-dining': ['/services/post-construction-cleaning-brisbane/', 'Post construction cleaning'],
+  'bathroom-handover': ['/services/builders-handover-clean-brisbane/', 'Builders handover clean'],
+  'bathroom-final': ['/services/builders-final-clean-brisbane/', 'Builders final clean'],
+  'new-home': ['/services/new-home-builders-clean-brisbane/', 'New home builders clean'],
+  dust: ['/services/construction-dust-removal-brisbane/', 'Construction dust removal'],
+  kitchen: ['/services/renovation-cleaning-brisbane/', 'Post renovation cleaning'],
+  pool: ['/services/pressure-washing-after-construction-brisbane/', 'Pressure washing after construction'],
+  stairs: ['/services/sparkle-clean-brisbane/', 'Sparkle clean'],
+  pantry: ['/services/commercial-fit-out-cleaning-brisbane/', 'Detail and fit-out cleaning'],
+};
+---
+<BaseLayout
+  title="Builders Clean Photos Brisbane | Builders Clean Brisbane Co."
+  description="Builders clean photos from real Brisbane jobs: polished concrete, bathrooms, kitchens, stairs and pool areas after construction. See our work, then get a quote."
+  schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS['living-dining'].src}
+>
+  <PageHead crumbs={crumbs} h1="Our Work: Builders Clean Photos in Brisbane" eyebrow="Gallery">
+    <div class="answer">
+      <p>
+        These builders clean photos are from our Brisbane jobs: polished concrete, black tile, timber stairs, stone benchtops and big glass,
+        photographed after the clean. Builders Clean Brisbane Co. is a Brisbane builders cleaning company, and we only show our own work. No
+        stock photos, no AI images. Filter by job type below.
+      </p>
+    </div>
+  </PageHead>
+
+  <section class="section" aria-labelledby="gal-h">
+    <div class="wrap gallery">
+      <h2 id="gal-h" class="sr-only">Photo gallery</h2>
+      <fieldset class="filters">
+        <legend class="sr-only">Filter photos by job type</legend>
+        <input type="radio" name="f" id="f-all" checked /><label for="f-all">All</label>
+        {groups.map(([k, label]) => (<><input type="radio" name="f" id={`f-${k}`} /><label for={`f-${k}`}>{label}</label></>))}
+      </fieldset>
+      <div class="photo-grid photo-grid--3">
+        {keys.map((k) => (
+          <div class="gallery__item" data-group={PHOTOS[k].group}>
+            <Photo photo={k} sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw" />
+            <p class="small"><a href={links[k][0]}>{links[k][1]}</a></p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-2 muted">Photos are from our Brisbane jobs.</p>
+      <!-- TODO: real job photos of rough clean, apartment, commercial fit-out, window cleaning, residue removal, site clean-up -->
+    </div>
+  </section>
+
+  <section class="section section--mist" aria-labelledby="next-h">
+    <div class="wrap wrap--narrow">
+      <h2 id="next-h">Want your build to look like this?</h2>
+      <p>Every job gets a before-and-after photo report like these. See our <a href="/services/">builders cleaning services</a>, the <a href="/areas/">areas we cover</a>, or go back to <a href="/">builders clean Brisbane</a>.</p>
+    </div>
+  </section>
+  <CtaBand />
+</BaseLayout>

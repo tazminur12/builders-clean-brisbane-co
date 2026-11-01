@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import QuoteForm from '../components/QuoteForm.astro';
+import MapFacade from '../components/MapFacade.astro';
+import Icon from '../components/Icon.astro';
+import { SITE, hasPhone, hasEmail, hasWhatsapp, hasHours, telHref, whatsappHref } from '../config/site';
+import { REGIONS, SUBURBS, areaUrl } from '../data/areas';
+import { breadcrumbList } from '../lib/schema';
+import { quoteTime } from '../lib/text';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Contact', href: '/contact/' }];
+---
+<BaseLayout
+  title="Get a Builders Clean Quote Brisbane | Builders Clean Brisbane Co."
+  description="Get a builders clean quote in Brisbane. Send the suburb, job type, handover date and plans or photos, and receive an itemised quote fast. Request yours now."
+  schema={[breadcrumbList(crumbs)]}
+>
+  <PageHead crumbs={crumbs} h1="Get a Builders Clean Quote in Brisbane" eyebrow="Contact">
+    <div class="answer">
+      <p>
+        Builders Clean Brisbane Co. is a Brisbane builders cleaning company that quotes builders cleans for builders and homeowners across
+        Brisbane, Moreton Bay, Logan, Ipswich and the Redlands. Fill in the form with the suburb, the job and your date, and we reply with an
+        itemised quote within {quoteTime()}. Plans help us quote faster: upload PDFs, floor plans or photos.
+      </p>
+    </div>
+  </PageHead>
+
+  <section class="section" id="quote" aria-labelledby="form-h">
+    <div class="wrap split">
+      <div class="form-card" style="box-shadow:none;border:1px solid var(--c-line)">
+        <h2 id="form-h">Request your quote</h2>
+        <QuoteForm id="c" />
+      </div>
+      <div class="stack">
+        <h2>Other ways to reach us</h2>
+        <address class="nap" style="font-size:17px">
+          <strong>{SITE.name}</strong>
+          <span>{SITE.addressLocality}, {SITE.addressRegion} (we come to you)</span>
+          {hasHours && <span><Icon name="clock" class="" /> {SITE.hours}</span>}
+          {hasPhone && <a href={telHref}>Call {SITE.phoneDisplay}</a>}
+          {hasEmail && <a href={`mailto:${SITE.email}`}>{SITE.email}</a>}
+          {hasWhatsapp && <a href={whatsappHref} rel="noopener">WhatsApp us</a>}
+        </address>
+        {!hasPhone && !hasEmail && <p class="muted">The quote form is the fastest way to reach us.</p>}
+        <MapFacade />
+        <h3>Service areas</h3>
+        <ul class="chips">
+          {REGIONS.map((r) => <li><a href={areaUrl(r.slug)}>{r.name}</a></li>)}
+          {SUBURBS.map((s) => <li><a href={areaUrl(s.slug)}>{s.name}</a></li>)}
+        </ul>
+        <p class="small">Not sure we cover your suburb? Put it in the form and we will confirm. Prefer to read first? See the <a href="/builders-clean-cost-brisbane/">price guide</a> or go back to <a href="/">builders clean Brisbane</a>.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

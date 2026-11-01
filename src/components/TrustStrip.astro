@@ -1,0 +1,26 @@
+---
+/**
+ * Trust strip: renders ONLY items listed in SITE.trust (owner-confirmed).
+ * Empty array → nothing renders at all.
+ */
+import Icon from './Icon.astro';
+import { SITE, type TrustKey, isSet } from '../config/site';
+import { recleanTime, quoteTime } from '../lib/text';
+
+const ITEMS: Record<TrustKey, { icon: 'shield' | 'card' | 'check' | 'camera' | 'refresh' | 'clock'; text: string }> = {
+  insured: { icon: 'shield', text: isSet(SITE.insurance) ? `Insured: ${SITE.insurance} public liability` : 'Public liability insured' },
+  'white-card-crews': { icon: 'card', text: 'White-card crews' },
+  'police-checked': { icon: 'check', text: 'Police-checked' },
+  'photo-report': { icon: 'camera', text: 'Photo report on every job' },
+  're-clean': { icon: 'refresh', text: `Re-clean promise: ${recleanTime()}` },
+  'quote-turnaround': { icon: 'clock', text: `Quote within ${quoteTime()}` },
+};
+const items = SITE.trust.filter((k) => k in ITEMS);
+---
+{items.length > 0 && (
+  <section class="trust" aria-label="Our standards">
+    <div class="wrap">
+      <ul>{items.map((k) => <li><Icon name={ITEMS[k].icon} />{ITEMS[k].text}</li>)}</ul>
+    </div>
+  </section>
+)}

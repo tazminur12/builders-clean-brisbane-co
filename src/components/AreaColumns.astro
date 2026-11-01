@@ -1,0 +1,17 @@
+---
+/** All 20 area pages grouped by region (service pages' "Areas we cover"). */
+import { REGIONS, SUBURBS, areaUrl } from '../data/areas';
+interface Props { prefix?: string }
+const { prefix = '' } = Astro.props;
+---
+<div class="area-cols">
+  {REGIONS.map((r) => (
+    <div>
+      <h3><a href={areaUrl(r.slug)}>{prefix}{r.name}</a></h3>
+      <ul class="link-list">
+        {SUBURBS.filter((s) => s.region === r.slug).map((s) => <li><a href={areaUrl(s.slug)}>{prefix}{s.name}</a></li>)}
+        {r.slug === 'redland' && <li class="small muted">Redlands suburbs: ask when you book</li>}
+      </ul>
+    </div>
+  ))}
+</div>

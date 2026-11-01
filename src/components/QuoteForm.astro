@@ -1,0 +1,65 @@
+---
+/**
+ * Netlify quote form: builder/homeowner toggle, suburb, job type, handover date, plan upload, honeypot.
+ * Same field names on every instance so Netlify registers one "quote" form.
+ */
+import { SERVICES } from '../data/services';
+import { AREAS } from '../data/areas';
+import { quoteTime } from '../lib/text';
+
+interface Props { id?: string; job?: string; suburb?: string; who?: 'builder' | 'homeowner' }
+const { id = 'q', job = '', suburb = '', who = 'homeowner' } = Astro.props;
+const f = (n: string) => `${id}-${n}`;
+---
+<form class="form" name="quote" method="POST" action="/thank-you/" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field">
+  <input type="hidden" name="form-name" value="quote" />
+  <p class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
+
+  <fieldset>
+    <legend>I am a…</legend>
+    <div class="toggle">
+      <input type="radio" id={f('who-b')} name="who" value="builder" checked={who === 'builder'} />
+      <label for={f('who-b')}>Builder or site manager</label>
+      <input type="radio" id={f('who-h')} name="who" value="homeowner" checked={who === 'homeowner'} />
+      <label for={f('who-h')}>Homeowner or investor</label>
+    </div>
+  </fieldset>
+
+  <div class="form-row form-row--2">
+    <div><label for={f('name')}>Your name</label><input id={f('name')} name="name" type="text" autocomplete="name" required /></div>
+    <div><label for={f('phone')}>Phone</label><input id={f('phone')} name="phone" type="tel" autocomplete="tel" inputmode="tel" aria-describedby={f('phone-h')} /><p class="hint" id={f('phone-h')}>Optional, but it helps if we have a quick question.</p></div>
+  </div>
+  <div><label for={f('email')}>Email</label><input id={f('email')} name="email" type="email" autocomplete="email" required /></div>
+
+  <div class="form-row form-row--2 builder-only">
+    <div><label for={f('company')}>Business name</label><input id={f('company')} name="company" type="text" autocomplete="organization" /></div>
+    <div><label for={f('abn')}>ABN</label><input id={f('abn')} name="abn" type="text" inputmode="numeric" /></div>
+  </div>
+
+  <div class="form-row form-row--2">
+    <div>
+      <label for={f('suburb')}>Suburb of the job</label>
+      <input id={f('suburb')} name="suburb" type="text" list={f('suburbs')} value={suburb} autocomplete="address-level2" required />
+      <datalist id={f('suburbs')}>{AREAS.filter((a) => a.kind === 'suburb').map((a) => <option value={a.name} />)}</datalist>
+    </div>
+    <div>
+      <label for={f('job')}>Type of clean</label>
+      <select id={f('job')} name="job">
+        <option value="Not sure" selected={job === ''}>Not sure yet</option>
+        {SERVICES.map((s) => <option value={s.name} selected={job === s.name}>{s.name}</option>)}
+      </select>
+    </div>
+  </div>
+
+  <div class="form-row form-row--2">
+    <div><label for={f('date')}>Handover or move-in date</label><input id={f('date')} name="date" type="date" aria-describedby={f('date-h')} /><p class="hint" id={f('date-h')}>Leave blank if it isn’t set yet.</p></div>
+    <div><label for={f('plans')}>Plans or photos</label><input id={f('plans')} name="plans" type="file" accept=".pdf,.jpg,.jpeg,.png,.heic,.webp" aria-describedby={f('plans-h')} /><p class="hint" id={f('plans-h')}>One PDF or photo, up to 8 MB. Plans help us quote faster.</p></div>
+  </div>
+
+  <div><label for={f('notes')}>Anything else we should know?</label><textarea id={f('notes')} name="notes" rows="4" placeholder="Levels, bedrooms and bathrooms, residue, access, after-hours…"></textarea></div>
+
+  <div>
+    <button class="btn btn--primary" type="submit" style="width:100%">Send for an itemised quote</button>
+    <p class="form-note mt-1">We reply within {quoteTime()}. We only use your details to quote and book your clean. See our <a href="/privacy-policy/">privacy policy</a>.</p>
+  </div>
+</form>

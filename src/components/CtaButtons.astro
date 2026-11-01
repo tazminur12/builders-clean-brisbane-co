@@ -1,0 +1,29 @@
+---
+/**
+ * Quote + call buttons, driven by site.ts.
+ * Phone empty  → a single "Get a free quote" button (no dead "Call" button).
+ * Phone set    → "Get a free quote" + tel: link.
+ */
+import Icon from './Icon.astro';
+import { SITE, hasPhone, telHref, hasWhatsapp, whatsappHref } from '../config/site';
+
+interface Props {
+  /** 'teal' = buttons sit on a teal background. */
+  on?: 'light' | 'teal';
+  quoteHref?: string;
+  quoteLabel?: string;
+  showWhatsapp?: boolean;
+  /** When no phone is set, show a "See prices" secondary button so the hero still has two actions. */
+  heroFallback?: boolean;
+  class?: string;
+}
+const { on = 'light', quoteHref = '/contact/#quote', quoteLabel = 'Get a free quote', showWhatsapp = false, heroFallback = false, class: cls } = Astro.props;
+const primary = on === 'teal' ? 'btn btn--lime' : 'btn btn--primary';
+const secondary = on === 'teal' ? 'btn btn--ghost-light' : 'btn btn--ghost';
+---
+<div class:list={['btn-row', cls]}>
+  <a class={primary} href={quoteHref}><Icon name="quote" />{quoteLabel}</a>
+  {hasPhone && <a class={secondary} href={telHref}><Icon name="phone" />Call {SITE.phoneDisplay}</a>}
+  {heroFallback && !hasPhone && <a class={secondary} href="/builders-clean-cost-brisbane/">See prices</a>}
+  {showWhatsapp && hasWhatsapp && <a class={secondary} href={whatsappHref} rel="noopener"><Icon name="whatsapp" />WhatsApp</a>}
+</div>

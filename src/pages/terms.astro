@@ -1,0 +1,25 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHead from '../components/PageHead.astro';
+import { SITE } from '../config/site';
+import { breadcrumbList } from '../lib/schema';
+import { recleanTime } from '../lib/text';
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Terms', href: '/terms/' }];
+---
+<BaseLayout title="Terms | Builders Clean Brisbane Co." description="The terms for using the Builders Clean Brisbane Co. website and for quotes, bookings, scope, variations and re-cleans on builders cleaning jobs in Brisbane." schema={[breadcrumbList(crumbs)]}>
+  <PageHead crumbs={crumbs} h1="Terms" />
+  <section class="section"><div class="wrap prose">
+    <p>These terms apply to this website and to quotes from {SITE.name} ({SITE.legalName}). Last updated: November 2026.</p>
+    <h2>Quotes</h2>
+    <p>Quotes are based on the plans, photos and information you provide. The scope of each job is the list of items in your written quote. If the job on the day is materially different, we will talk to you before doing extra work.</p>
+    <h2>Variations</h2>
+    <p>Any change to the scope or price is agreed with you in writing before the work is done.</p>
+    <h2>Re-cleans</h2>
+    <p>If an in-scope item is missed, tell us within {recleanTime()} of the clean and we will return to re-clean it.</p>
+    <h2>Access</h2>
+    <p>You are responsible for giving us safe access to the site, with working power and water, at the agreed time.</p>
+    <h2>Website content</h2>
+    <p>Information on this website, including the price guide and checklists, is general information. Your written quote sets out the price and scope for your job.</p>
+    <p>[FULL TERMS OF TRADE — TBC BY OWNER]</p>
+  </div></section>
+</BaseLayout>

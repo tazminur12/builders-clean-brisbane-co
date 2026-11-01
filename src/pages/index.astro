@@ -1,0 +1,258 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import CtaButtons from '../components/CtaButtons.astro';
+import Photo from '../components/Photo.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import StageDiagram from '../components/StageDiagram.astro';
+import ServiceCards from '../components/ServiceCards.astro';
+import Steps from '../components/Steps.astro';
+import MapFacade from '../components/MapFacade.astro';
+import Testimonials from '../components/Testimonials.astro';
+import Faq from '../components/Faq.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Icon from '../components/Icon.astro';
+import { REGIONS, SUBURBS, areaUrl } from '../data/areas';
+import { HOME_FAQS } from '../data/faqs';
+import { REVIEWS } from '../data/reviews';
+import type { PhotoKey } from '../data/photos';
+import { SITE, hasReviewUrl } from '../config/site';
+import { website } from '../lib/schema';
+import { quoteTime, recleanTime } from '../lib/text';
+
+const work: PhotoKey[] = ['living-dining', 'kitchen', 'bathroom-handover', 'stairs', 'pantry', 'pool'];
+const priceFactors = [
+  ['Floor area', 'The single biggest factor. More square metres means more surface to clean.'],
+  ['Levels', 'Stairs, balustrades and a second set of wet areas add time.'],
+  ['Glazing', 'Floor-to-ceiling glass, sliding doors and window count change the job a lot.'],
+  ['Finishes', 'Stone, polished concrete and dark tiles need slower, surface-specific methods.'],
+  ['Access', 'Lifts, loading docks, parking and stairs in apartment buildings.'],
+  ['Build stage', 'A rough clean, a final clean and a sparkle clean are different jobs, and residue changes the scope.'],
+  ['Time of day', 'After-hours, overnight and weekend work for fit-outs and tight programs.'],
+];
+---
+<BaseLayout
+  title="Builders Clean Brisbane | Post Construction Cleaning | Builders Clean Brisbane Co."
+  description="Builders clean Brisbane for builders and homeowners. Rough, final and handover cleans with itemised quotes, flexible scheduling and photo reports. Get a quote."
+  schema={[website()]}
+>
+  <!-- Hero: on mobile H1 → promise → buttons → photo -->
+  <section class="hero on-teal">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow">Brisbane’s builders clean specialists</p>
+        <h1>Builders Clean Brisbane</h1>
+        <p class="hero__promise">On the handover date, to handover standard, with photos to prove it.</p>
+        <CtaButtons on="teal" showWhatsapp heroFallback />
+        <ul class="hero__meta">
+          <li>Rough, final and handover cleans</li>
+          <li>Builders and homeowners</li>
+          <li>Brisbane, Moreton Bay, Logan, Ipswich, Redlands</li>
+        </ul>
+      </div>
+      <div class="hero__media">
+        <Photo photo="polished-concrete" caption={false} eager crop={[3, 2]} sizes="(min-width: 900px) 50vw, 100vw" widths={[360, 540, 720, 860, 1080]}
+          alt="Polished concrete floor cleaned after construction in a Brisbane home, ready for handover" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Answer-first intro + builder / homeowner split -->
+  <section class="section" aria-labelledby="who-h">
+    <div class="wrap">
+      <div class="split">
+        <div class="answer">
+          <p>
+            Builders Clean Brisbane Co. is a Brisbane builders cleaning company that cleans new homes, renovations, apartments and fit-outs for
+            builders and homeowners across Brisbane, Moreton Bay, Logan, Ipswich and the Redlands. A builders clean removes the dust, residue,
+            stickers and debris that trades leave behind, so the home is ready for handover, inspection or move-in.
+          </p>
+          <p>
+            Our builders cleaning in Brisbane is quoted room by room within {quoteTime()}, booked around your program, checked by a supervisor
+            and finished with a photo report. Builders cleaning is all we do.
+          </p>
+        </div>
+        <div>
+          <h2 id="who-h" style="font-size:clamp(28px,3vw,36px)">Builder or homeowner?</h2>
+          <div class="grid">
+            <a class="card card--link card--teal" href="/for-builders/">
+              <span class="card__tag">For builders</span>
+              <h3>I’m a builder or site manager</h3>
+              <p>Staged cleans to your program, a supervisor sign-off and a photo report your client can see. Documents on request.</p>
+              <span class="card__more" aria-hidden="true">Builder accounts</span>
+            </a>
+            <a class="card card--link" href="/services/new-home-builders-clean-brisbane/">
+              <span class="card__tag">For homeowners</span>
+              <h3>I’m a homeowner or investor</h3>
+              <p>The clean you expected before move-in or sale, in plain language, with a quote that lists everything included.</p>
+              <span class="card__more" aria-hidden="true">New home clean</span>
+            </a>
+          </div>
+          <p class="small mt-1">Homeowners: see <a href="/services/renovation-cleaning-brisbane/">post renovation cleaning</a> and our <a href="/builders-clean-cost-brisbane/">price guide</a>. Builders: <a href="/contact/#quote">send plans for a builder quote</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <TrustStrip />
+
+  <!-- Three stages -->
+  <section class="section section--mist" aria-labelledby="stages-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">The three stages</p>
+        <h2 id="stages-h">Builders cleaning in Brisbane, stage by stage</h2>
+        <p>
+          A build is cleaned more than once. The rough clean keeps the site workable between trades, the final clean takes the home to
+          handover standard after the last trade, and the handover or sparkle clean is the last pass before the inspection or move-in.
+          Together they make up a full <a href="/services/post-construction-cleaning-brisbane/">post construction cleaning Brisbane</a> service.
+        </p>
+      </div>
+      <StageDiagram />
+    </div>
+  </section>
+
+  <!-- Services grid -->
+  <section class="section" aria-labelledby="svc-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Services</p>
+        <h2 id="svc-h">Every builders clean, from first fix to the keys</h2>
+        <p>Seventeen services, grouped by what you need. Each page lists exactly what is included and how we price it.</p>
+      </div>
+      <ServiceCards />
+      <p><a class="btn btn--ghost" href="/services/">All builders cleaning services</a></p>
+    </div>
+  </section>
+
+  <!-- Flexibility -->
+  <section class="section section--soft" aria-labelledby="flex-h">
+    <div class="wrap split split--center">
+      <div>
+        <p class="eyebrow">Why builders call us back</p>
+        <h2 id="flex-h">Trades run late. Handover dates move. We move with them.</h2>
+        <p>
+          The thing customers praise most in every set of builders cleaning reviews we studied is flexibility: a crew that still turns up when the
+          plasterer runs two days over and the handover date moves. We build our schedule for that.
+        </p>
+        <p>
+          You send the plans and the date. We confirm the slot in writing and send a reminder before the crew arrives. If the program moves, you
+          tell one contact and we re-book, without starting again. On the day, a supervisor checks the job against the checklist, and the photo
+          report lands in your inbox before you have to ask.
+        </p>
+        <p>
+          For homeowners, the same planning means the clean lands between handover and move-in, not on top of the removalist. For builders, it
+          means cleaning drops off the defects list.
+        </p>
+      </div>
+      <Photo photo="new-home" alt="New home cleaned before move-in by a builders clean crew in Brisbane" />
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section section--teal on-teal" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-h">From plans to sign-off in five steps</h2>
+        <p>Missed something? Tell us within {recleanTime()} and we come back to re-clean any in-scope item.</p>
+      </div>
+      <Steps />
+    </div>
+  </section>
+
+  <!-- Price factors -->
+  <section class="section" aria-labelledby="price-h">
+    <div class="wrap">
+      <div>
+        <div class="section-head">
+          <p class="eyebrow">Pricing</p>
+          <h2 id="price-h">What changes the price of a builders clean</h2>
+          <p>
+            Most Brisbane cleaning companies will not publish prices. We would rather show you how we work them out, so you can compare quotes
+            on the same scope. Two homes with the same number of bedrooms can need very different amounts of work.
+          </p>
+          <p>Our <a href="/builders-clean-cost-brisbane/">builders clean cost guide</a> sets out starting prices by property size and stage.</p>
+          <p><a class="btn btn--primary" href="/builders-clean-cost-brisbane/">See the price guide</a></p>
+        </div>
+        <dl class="grid grid--4" style="margin:0">
+          {priceFactors.map(([k, v]) => (
+            <div class="card"><dt class="card__dt">{k}</dt><dd style="margin:0">{v}</dd></div>
+          ))}
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <!-- Our work -->
+  <section class="section section--mist" aria-labelledby="work-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Our work</p>
+        <h2 id="work-h">Real Brisbane jobs, cleaned by our crew</h2>
+        <p>Polished concrete, black tile, timber stairs and big glass: the finishes that show every speck of dust. No stock photos.</p>
+      </div>
+      <div class="photo-grid photo-grid--3">
+        {work.map((k) => <Photo photo={k} sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw" />)}
+      </div>
+      <p class="mt-2"><a href="/our-work/">See all builders clean photos</a></p>
+    </div>
+  </section>
+
+  <!-- Areas -->
+  <section class="section" aria-labelledby="areas-h">
+    <div class="wrap">
+      <div class="section-head">
+        <p class="eyebrow">Areas we cover</p>
+        <h2 id="areas-h">Builders cleaning across Greater Brisbane</h2>
+        <p>From inner-city apartments to the new estates in the growth corridors. <a href="/areas/">See all service areas</a>.</p>
+      </div>
+      <div class="split">
+        <div class="area-cols" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+          {REGIONS.map((r) => (
+            <div>
+              <h3><a href={areaUrl(r.slug)}>{r.name}</a></h3>
+              <ul class="link-list">{SUBURBS.filter((s) => s.region === r.slug).map((s) => <li><a href={areaUrl(s.slug)}>{s.name}</a></li>)}</ul>
+            </div>
+          ))}
+        </div>
+        <MapFacade />
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews: real reviews only; otherwise the review CTA -->
+  <Testimonials />
+  {REVIEWS.length === 0 && (
+    <section class="section section--soft section--tight" aria-labelledby="rev-h">
+      <div class="wrap split split--center">
+        <div>
+          <h2 id="rev-h">Had a clean with us?</h2>
+          <p>We are a new Brisbane business and every review helps other builders and homeowners find us. Tell people the job type and the suburb.</p>
+        </div>
+        <div class="btn-row">
+          {hasReviewUrl
+            ? <a class="btn btn--primary" href={SITE.reviewUrl} rel="noopener"><Icon name="star" />Leave us a Google review</a>
+            : <a class="btn btn--primary" href="/reviews/"><Icon name="star" />Leave us a Google review</a>}
+          <a class="btn btn--ghost" href="/reviews/">Reviews</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- FAQ -->
+  <section class="section" aria-labelledby="faq-h">
+    <div class="wrap wrap--narrow">
+      <div class="section-head">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-h">Builders clean questions</h2>
+      </div>
+      <Faq faqs={HOME_FAQS} />
+      <p class="mt-2">More answers in the <a href="/faq/">builders clean FAQ</a>.</p>
+      <p class="lead mt-2">
+        Looking for a builders clean in Brisbane that turns up on the date and leaves nothing on the defects list? Send us the plans.
+      </p>
+    </div>
+  </section>
+
+  <CtaBand />
+</BaseLayout>

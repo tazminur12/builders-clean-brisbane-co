@@ -1,0 +1,16 @@
+---
+/** "How it works" — 5 steps (template step 8). */
+import { quoteTime } from '../lib/text';
+interface Props { steps?: { h: string; p: string }[] }
+const defaults = [
+  { h: 'Send plans or photos', p: 'Upload plans, photos or a short video with the suburb and your handover or move-in date.' },
+  { h: `Itemised quote in ${quoteTime()}`, p: 'Room by room, with what is and is not included, and the date we can hold for you.' },
+  { h: 'Book around your program', p: 'We lock the slot to your program. If trades run late and the date moves, we move with it.' },
+  { h: 'Clean and supervisor check', p: 'The crew works top to bottom, then a supervisor walks every room against the checklist.' },
+  { h: 'Photo report and sign-off', p: 'Before-and-after photos go to you, and to your client if you want, before we sign off.' },
+];
+const { steps = defaults } = Astro.props;
+---
+<ol class:list={['steps', { 'steps--5': steps.length === 5 }]}>
+  {steps.map((s) => <li><h3>{s.h}</h3><p>{s.p}</p></li>)}
+</ol>
