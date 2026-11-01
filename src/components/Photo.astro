@@ -16,12 +16,14 @@ interface Props {
 }
 const { photo, alt, caption, eager = false, sizes = '(min-width: 960px) 560px, 100vw', widths = [360, 540, 720, 860, 1080], class: cls, crop } = Astro.props;
 const p = PHOTOS[photo];
+// LITE_IMAGES=1 → smaller preview build (2 sizes, AVIF + JPG). Normal builds are unaffected.
+const lite = process.env.LITE_IMAGES === '1';
 const w = 1080;
 const h = crop ? Math.round((w * crop[1]) / crop[0]) : 1080;
 const cap = caption === false ? null : caption ?? p.caption;
 const pic = (
   // fit/position only matter when cropping
-  { src: p.src, alt: alt ?? p.alt, widths, sizes, width: w, height: h, formats: ['avif', 'webp'] as ('avif' | 'webp')[], fallbackFormat: 'jpg' as const, quality: eager ? 45 : 58,
+  { src: p.src, alt: alt ?? p.alt, widths: lite ? [540, 860] : widths, sizes, width: w, height: h, formats: (lite ? ['avif'] : ['avif', 'webp']) as ('avif' | 'webp')[], fallbackFormat: 'jpg' as const, quality: lite ? 50 : eager ? 45 : 58,
     loading: eager ? ('eager' as const) : ('lazy' as const), fetchpriority: eager ? ('high' as const) : undefined, decoding: eager ? ('sync' as const) : ('async' as const),
     fit: 'cover' as const, position: 'center' as const }
 );

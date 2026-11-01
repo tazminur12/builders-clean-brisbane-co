@@ -31,7 +31,7 @@ const { title, description, schema = [], ogImage, ogType = 'website', noindex = 
 const canonical = abs(canonicalPath ?? Astro.url.pathname);
 
 let og = abs('/brand/og-image-1200x630.jpg');
-if (ogImage) {
+if (ogImage && process.env.LITE_IMAGES !== '1') {
   const img = await getImage({ src: ogImage, width: 1200, height: 630, fit: 'cover', position: 'center', format: 'jpg', quality: 80 });
   og = abs(img.src);
 }
