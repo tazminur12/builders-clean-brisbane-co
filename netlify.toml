@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "npm run build:netlify"  # full QA: run `npm run build` locally
   publish = "dist"
 
 [build.environment]
