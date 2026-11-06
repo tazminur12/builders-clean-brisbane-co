@@ -30,3 +30,14 @@ npm run preview
 | `kit-assets/` | Branded photos and GBP images (for Google Business Profile and social, not the site) |
 
 See `PLACEHOLDERS.md` for everything the owner still has to supply and `LAUNCH.md` for deployment.
+
+## Changing the design (UI/UX)
+- **Colours, fonts, spacing, radius:** CSS custom properties at the top of `src/styles/global.css` (`--c-teal`, `--c-lime`, `--f-head`, `--r`, …). All styles are in that one file, plain CSS, no framework.
+- **Header, footer, mobile action bar:** `src/components/Header.astro`, `Footer.astro`, `ActionBar.astro`.
+- **Page skeleton (head tags, fonts, schema, menu script):** `src/layouts/BaseLayout.astro`.
+- **Reusable blocks:** `src/components/` (hero/page head, CTA buttons, FAQ accordion, quote form, photo, steps, comparison table, map, stage diagram).
+- **Page layouts:** `src/pages/index.astro` (home), `src/pages/services/[slug].astro` (all 17 service pages), `src/pages/areas/[slug].astro` (all 20 area pages), plus one file per core page in `src/pages/`.
+- **Words, not layout:** edit the data files in `src/data/` and the blog in `src/content/blog/`. Copy and layout are kept separate, so a redesign shouldn't need copy changes.
+- **Logo and favicons:** `public/brand/` and `public/`. Photos: `src/assets/photos/` (real job photos only).
+- **Keep:** one `<h1>` per page, `lang="en-AU"`, the canonical/OG/schema tags in `BaseLayout.astro`, and the Netlify form attributes in `QuoteForm.astro`. `npm run build` checks titles, links and schema and fails if something breaks.
+- Requires Node 22.23.4+ (see `package.json` engines from Astro 7).
