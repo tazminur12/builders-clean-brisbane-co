@@ -29,7 +29,7 @@ Everything you need is in this folder. **Read every file in `/docs` before writi
   - `src/content/blog/*.md` – blog posts (Astro content collections)
 - Dynamic routes: `src/pages/services/[slug].astro` and `src/pages/areas/[slug].astro` built from the data files.
 - Images: put the photos in `src/assets/photos/` and use Astro's `<Picture>` (AVIF + WebP + JPG fallback, explicit width/height, `loading="lazy"` except the hero which is `loading="eager" fetchpriority="high"`).
-- Fonts: self-host **Barlow Condensed** (ExtraBold 800, Bold 700, SemiBold 600, files in `assets/fonts/`) and **Inter** (400/500/600, use `@fontsource/inter` or self-host). `font-display: swap`, preload the 800 weight.
+- Fonts: self-host **Barlow Condensed** (ExtraBold 800, Bold 700, SemiBold 600) and **Source Sans 3** (400/500/600) from `public/fonts/`. `font-display: swap`, preload the heading 800 and body 400 weights.
 - Forms: **Netlify Forms** (`data-netlify="true"`, honeypot field). Hosting target is **Netlify** (`netlify.toml` with security headers + caching).
 - Add `@astrojs/sitemap`. Write `robots.txt` by hand.
 - Code must pass `astro check` with no errors.
@@ -164,7 +164,7 @@ Length targets: homepage 1,800–2,500 words; service pages 1,000–1,500 words;
 
 ## 7. Design direction
 
-Read `docs/01` for tokens. In short: **Deep Teal `#0D3B3A` + White, Fresh Lime `#B8E62E` as the accent only** (never lime text on white — it fails contrast). Headings in Barlow Condensed 800 uppercase-feel, body in Inter. The look: confident, clean, premium trade — like a high-end builder's site, not a cheap cleaning template. Big real photos (polished concrete, glass, timber — the photos are luxury new-build finishes; lean into that), generous white space, sharp 6px radii (matching the logo square), the diagonal lime "squeegee stripe" from the logo used sparingly as a graphic device (section dividers, hero corner, active states). No gradients washes, no emoji, no left-border cards, no carousels that auto-play.
+Read `docs/01` for tokens. In short: **Deep Teal `#0D3B3A` + White, Fresh Lime `#B8E62E` as the accent only** (never lime text on white — it fails contrast). Headings in Barlow Condensed 800 uppercase-feel, body in Source Sans 3. The look: confident, clean, premium trade — like a high-end builder's site, not a cheap cleaning template. Big real photos (polished concrete, glass, timber — the photos are luxury new-build finishes; lean into that), generous white space, sharp 6px radii (matching the logo square), the diagonal lime "squeegee stripe" from the logo used sparingly as a graphic device (section dividers, hero corner, active states). No gradients washes, no emoji, no left-border cards, no carousels that auto-play.
 
 Must work perfectly at 360px wide. Hero on mobile: H1, one-line promise, two buttons, then the photo.
 

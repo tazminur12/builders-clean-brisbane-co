@@ -56,8 +56,8 @@
 
 **Typefaces**
 - Headings and wordmark: **Barlow Condensed** ExtraBold 800 (H1/H2), SemiBold 600 (H3, labels). Files: `assets/fonts/`. Uppercase is used for labels and eyebrows only; H1s are sentence case in the markup so they read naturally to search engines and screen readers. Keep it strong with size and weight.
-- Body and UI: **Inter** 400 / 500 / 600.
-- Sizes: body 17–18px, line-height 1.6; H1 clamp(40px, 6vw, 64px); H2 clamp(30px, 4vw, 44px).
+- Body and UI: **Source Sans 3** 400 / 500 / 600 (self-hosted latin woff2 in `public/fonts/`).
+- Sizes: body 17–18.5px, line-height 1.65; H1 clamp(40px, 6vw, 64px); H2 clamp(30px, 4vw, 44px).
 - Radius: 6px (matches the logo square). No pill buttons.
 
 ## Logo

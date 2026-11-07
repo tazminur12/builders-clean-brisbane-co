@@ -1,65 +1,100 @@
 ---
+import Icon from './Icon.astro';
 import { SITE, hasPhone, hasEmail, hasHours, hasWhatsapp, telHref, whatsappHref, isSet } from '../config/site';
 import { SERVICES, serviceUrl } from '../data/services';
-import { REGIONS, SUBURBS, areaUrl } from '../data/areas';
+import { REGIONS, areaUrl } from '../data/areas';
 
 const year = new Date().getFullYear();
-const socials = Object.entries(SITE.socials).filter(([, v]) => isSet(v));
+
+type SocialIcon = 'facebook' | 'instagram' | 'linkedin' | 'google';
+const socialItems: { key: SocialIcon; label: string; href: string }[] = [
+  { key: 'facebook', label: 'Facebook', href: SITE.socials.facebook },
+  { key: 'instagram', label: 'Instagram', href: SITE.socials.instagram },
+  { key: 'linkedin', label: 'LinkedIn', href: SITE.socials.linkedin },
+  ...(isSet(SITE.gbpUrl) ? [{ key: 'google' as const, label: 'Google', href: SITE.gbpUrl }] : []),
+].filter((s) => isSet(s.href));
+
+/** Compact footer: key services only — full list lives on /services/ */
+const FOOTER_SERVICE_SLUGS = [
+  'post-construction-cleaning-brisbane',
+  'builders-rough-clean-brisbane',
+  'builders-final-clean-brisbane',
+  'builders-handover-clean-brisbane',
+  'new-home-builders-clean-brisbane',
+  'renovation-cleaning-brisbane',
+] as const;
+
+const footerServices = FOOTER_SERVICE_SLUGS.map((slug) => SERVICES.find((s) => s.slug === slug)).filter(Boolean);
 ---
 <footer class="site-footer on-teal">
   <div class="wrap">
     <div class="site-footer__grid">
-      <div>
-        <img src="/brand/logo-stacked-reversed.svg" alt="" width="333" height="290" loading="lazy" style="width:150px;margin-bottom:18px" />
+      <div class="site-footer__brand">
+        <a class="site-footer__logo" href="/" aria-label={`${SITE.name} home`}>
+          <img src="/brand/logo-stacked-reversed.svg" alt="" width="333" height="290" loading="lazy" decoding="async" />
+        </a>
         <address class="nap">
           <strong>{SITE.name}</strong>
           <span>{SITE.addressLocality}, {SITE.addressRegion}</span>
-          <span>Builders cleaning across Brisbane, Moreton Bay, Logan, Ipswich and the Redlands</span>
+          <span class="nap__scope">Builders cleaning across Brisbane, Moreton Bay, Logan, Ipswich and the Redlands</span>
           {hasHours && <span>Hours: {SITE.hours}</span>}
           {hasPhone && <a href={telHref}>{SITE.phoneDisplay}</a>}
           {hasEmail && <a href={`mailto:${SITE.email}`}>{SITE.email}</a>}
           {hasWhatsapp && <a href={whatsappHref} rel="noopener">WhatsApp us</a>}
         </address>
-        <p><a class="btn btn--lime" href="/contact/#quote">Get a free quote</a></p>
-        {isSet(SITE.gbpUrl) && <p><a href={SITE.gbpUrl} rel="noopener">Find us on Google</a></p>}
-        {socials.length > 0 && (
-          <ul aria-label="Social media">
-            {socials.map(([k, v]) => <li><a href={v} rel="noopener">{k.charAt(0).toUpperCase() + k.slice(1)}</a></li>)}
-          </ul>
+        <p class="site-footer__cta"><a class="btn btn--lime" href="/contact/#quote">Get a free quote</a></p>
+        {socialItems.length > 0 && (
+          <div class="site-footer__follow">
+            <p class="site-footer__follow-label">Follow us</p>
+            <ul class="site-footer__social" aria-label="Social media">
+              {socialItems.map((s) => (
+                <li>
+                  <a class="site-footer__social-link" href={s.href} rel="noopener noreferrer" target="_blank" aria-label={s.label}>
+                    <Icon name={s.key} />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
-      <nav aria-label="Services">
+
+      <nav class="site-footer__nav" aria-label="Services">
         <h2>Services</h2>
-        <ul class="site-footer__cols">
-          {SERVICES.map((s) => <li><a href={serviceUrl(s.slug)}>{s.name}</a></li>)}
+        <ul>
+          {footerServices.map((s) => s && <li><a href={serviceUrl(s.slug)}>{s.name}</a></li>)}
+          <li><a class="site-footer__more" href="/services/">All services</a></li>
         </ul>
       </nav>
-      <nav aria-label="Service areas">
-        <h2>Service areas</h2>
-        <ul class="site-footer__cols">
+
+      <nav class="site-footer__nav" aria-label="Service areas">
+        <h2>Areas</h2>
+        <ul>
           {REGIONS.map((r) => <li><a href={areaUrl(r.slug)}>{r.name}</a></li>)}
-          {SUBURBS.map((s) => <li><a href={areaUrl(s.slug)}>{s.name}</a></li>)}
+          <li><a class="site-footer__more" href="/areas/">All areas</a></li>
         </ul>
       </nav>
-      <nav aria-label="Company">
+
+      <nav class="site-footer__nav site-footer__nav--company" aria-label="Company">
         <h2>Company</h2>
         <ul>
-          <li><a href="/">Builders clean Brisbane</a></li>
           <li><a href="/builders-clean-cost-brisbane/">Price guide</a></li>
-          <li><a href="/builders-clean-checklist/">Checklist</a></li>
           <li><a href="/for-builders/">For builders</a></li>
           <li><a href="/our-work/">Our work</a></li>
           <li><a href="/reviews/">Reviews</a></li>
           <li><a href="/about/">About</a></li>
           <li><a href="/faq/">FAQ</a></li>
-          <li><a href="/blog/">Guides</a></li>
           <li><a href="/contact/">Contact</a></li>
         </ul>
       </nav>
     </div>
+
     <div class="site-footer__bottom">
       <span>&copy; {year} {SITE.name}{isSet(SITE.legalName) ? ` · ${SITE.legalName}` : ''}</span>
-      <span><a href="/privacy-policy/">Privacy policy</a> · <a href="/terms/">Terms</a></span>
+      <nav class="site-footer__legal" aria-label="Legal">
+        <a href="/privacy-policy/">Privacy policy</a>
+        <a href="/terms/">Terms</a>
+      </nav>
     </div>
   </div>
 </footer>

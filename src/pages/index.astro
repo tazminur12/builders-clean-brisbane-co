@@ -35,32 +35,33 @@ const priceFactors = [
   description="Builders clean Brisbane for builders and homeowners. Rough, final and handover cleans with itemised quotes, flexible scheduling and photo reports. Get a quote."
   schema={[website()]}
 >
-  <!-- Hero: on mobile H1 → promise → buttons → photo -->
+  <!-- Hero: on mobile H1 → promise → buttons → photo → meta -->
   <section class="hero on-teal">
     <div class="wrap hero__grid">
       <div class="hero__copy">
         <p class="eyebrow">Brisbane’s builders clean specialists</p>
         <h1>Builders Clean Brisbane</h1>
         <p class="hero__promise">On the handover date, to handover standard, with photos to prove it.</p>
-        <CtaButtons on="teal" showWhatsapp heroFallback />
-        <ul class="hero__meta">
-          <li>Rough, final and handover cleans</li>
-          <li>Builders and homeowners</li>
-          <li>Brisbane, Moreton Bay, Logan, Ipswich, Redlands</li>
-        </ul>
+        <CtaButtons on="teal" showWhatsapp heroFallback class="hero__actions" />
       </div>
       <div class="hero__media">
-        <Photo photo="polished-concrete" caption={false} eager crop={[3, 2]} sizes="(min-width: 900px) 50vw, 100vw" widths={[360, 540, 720, 860, 1080]}
+        <Photo photo="polished-concrete" caption={false} eager crop={[3, 2]} sizes="(min-width: 900px) 52vw, 100vw" widths={[360, 540, 720, 860, 1080, 1280]}
           alt="Polished concrete floor cleaned after construction in a Brisbane home, ready for handover" />
       </div>
+      <ul class="hero__meta">
+        <li>Rough, final and handover cleans</li>
+        <li>Builders and homeowners</li>
+        <li>Brisbane, Moreton Bay, Logan, Ipswich, Redlands</li>
+      </ul>
     </div>
   </section>
 
   <!-- Answer-first intro + builder / homeowner split -->
-  <section class="section" aria-labelledby="who-h">
+  <section class="section section--soft who" aria-labelledby="who-h">
     <div class="wrap">
-      <div class="split">
-        <div class="answer">
+      <div class="who__grid">
+        <div class="who__intro answer">
+          <p class="eyebrow">Who we clean for</p>
           <p>
             Builders Clean Brisbane Co. is a Brisbane builders cleaning company that cleans new homes, renovations, apartments and fit-outs for
             builders and homeowners across Brisbane, Moreton Bay, Logan, Ipswich and the Redlands. A builders clean removes the dust, residue,
@@ -71,23 +72,27 @@ const priceFactors = [
             and finished with a photo report. Builders cleaning is all we do.
           </p>
         </div>
-        <div>
-          <h2 id="who-h" style="font-size:clamp(28px,3vw,36px)">Builder or homeowner?</h2>
-          <div class="grid">
-            <a class="card card--link card--teal" href="/for-builders/">
-              <span class="card__tag">For builders</span>
+        <div class="who__paths">
+          <h2 id="who-h" class="who__title">Builder or homeowner?</h2>
+          <p class="who__lead">Pick your path. Same crews, same handover standard — different booking and paperwork.</p>
+          <div class="who__cards">
+            <a class="who-card who-card--builder" href="/for-builders/">
+              <span class="who-card__tag">For builders</span>
               <h3>I’m a builder or site manager</h3>
               <p>Staged cleans to your program, a supervisor sign-off and a photo report your client can see. Documents on request.</p>
-              <span class="card__more" aria-hidden="true">Builder accounts</span>
+              <span class="who-card__more" aria-hidden="true">Builder accounts</span>
             </a>
-            <a class="card card--link" href="/services/new-home-builders-clean-brisbane/">
-              <span class="card__tag">For homeowners</span>
+            <a class="who-card who-card--home" href="/services/new-home-builders-clean-brisbane/">
+              <span class="who-card__tag">For homeowners</span>
               <h3>I’m a homeowner or investor</h3>
               <p>The clean you expected before move-in or sale, in plain language, with a quote that lists everything included.</p>
-              <span class="card__more" aria-hidden="true">New home clean</span>
+              <span class="who-card__more" aria-hidden="true">New home clean</span>
             </a>
           </div>
-          <p class="small mt-1">Homeowners: see <a href="/services/renovation-cleaning-brisbane/">post renovation cleaning</a> and our <a href="/builders-clean-cost-brisbane/">price guide</a>. Builders: <a href="/contact/#quote">send plans for a builder quote</a>.</p>
+          <ul class="who__links">
+            <li>Homeowners: <a href="/services/renovation-cleaning-brisbane/">post renovation cleaning</a> · <a href="/builders-clean-cost-brisbane/">price guide</a></li>
+            <li>Builders: <a href="/contact/#quote">send plans for a builder quote</a></li>
+          </ul>
         </div>
       </div>
     </div>

@@ -53,7 +53,12 @@ export const SITE = {
   reviewUrl: '', // short Google review link — TBC
   /** Google Maps embed src. Leave empty to use the Brisbane-centred default; replace with the GBP embed once the profile exists. */
   mapEmbedUrl: '',
-  socials: { facebook: '', instagram: '', linkedin: '' },
+  /** Public profile URLs — replace with real accounts before launch. */
+  socials: {
+    facebook: 'https://www.facebook.com/yourpage',
+    instagram: 'https://www.instagram.com/yourhandle',
+    linkedin: 'https://www.linkedin.com/company/yourcompany',
+  },
   insurance: '[PUBLIC LIABILITY AMOUNT — TBC]', // e.g. '$20 million'
   foundingYear: '',
   reCleanWindow: '', // e.g. '48' (hours) — renders [X HOURS] until set
