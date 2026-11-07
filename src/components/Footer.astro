@@ -7,12 +7,15 @@ import { REGIONS, areaUrl } from '../data/areas';
 const year = new Date().getFullYear();
 
 type SocialIcon = 'facebook' | 'instagram' | 'linkedin' | 'google';
-const socialItems: { key: SocialIcon; label: string; href: string }[] = [
-  { key: 'facebook', label: 'Facebook', href: SITE.socials.facebook },
-  { key: 'instagram', label: 'Instagram', href: SITE.socials.instagram },
-  { key: 'linkedin', label: 'LinkedIn', href: SITE.socials.linkedin },
-  ...(isSet(SITE.gbpUrl) ? [{ key: 'google' as const, label: 'Google', href: SITE.gbpUrl }] : []),
-].filter((s) => isSet(s.href));
+type SocialItem = { key: SocialIcon; label: string; href: string };
+const socialItems: SocialItem[] = (
+  [
+    { key: 'facebook', label: 'Facebook', href: SITE.socials.facebook },
+    { key: 'instagram', label: 'Instagram', href: SITE.socials.instagram },
+    { key: 'linkedin', label: 'LinkedIn', href: SITE.socials.linkedin },
+    ...(isSet(SITE.gbpUrl) ? [{ key: 'google' as const, label: 'Google', href: SITE.gbpUrl }] : []),
+  ] satisfies SocialItem[]
+).filter((s): s is SocialItem => isSet(s.href));
 
 /** Compact footer: key services only — full list lives on /services/ */
 const FOOTER_SERVICE_SLUGS = [
