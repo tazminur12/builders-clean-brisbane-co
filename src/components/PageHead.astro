@@ -11,24 +11,41 @@ interface Props {
   lead?: string;
   photo?: PhotoKey;
   photoAlt?: string;
+  /** Optional trust bullets under the copy (homepage hero meta style). */
+  meta?: string[];
+  class?: string;
 }
-const { crumbs, h1, eyebrow, lead, photo, photoAlt } = Astro.props;
+const { crumbs, h1, eyebrow, lead, photo, photoAlt, meta, class: cls } = Astro.props;
+const hasMedia = Boolean(photo);
 ---
-<section class:list={['page-head on-teal', { 'page-head--plain': !photo }]}>
-  <div class="wrap">
-    {crumbs && <Breadcrumbs crumbs={crumbs} />}
-    <div class="page-head__grid">
-      <div class="page-head__copy">
-        {eyebrow && <p class="eyebrow">{eyebrow}</p>}
-        <h1>{h1}</h1>
-        {lead && <p class="lead">{lead}</p>}
-        <slot />
-      </div>
-      {photo && (
-        <div class="page-head__media">
-          <Photo photo={photo} alt={photoAlt} caption={false} eager crop={[5, 4]} sizes="(min-width: 900px) 520px, 100vw" widths={[360, 540, 720, 860, 1080]} />
-        </div>
-      )}
+<section class:list={['page-head on-teal', { 'page-head--plain': !hasMedia, 'page-head--hero': hasMedia }, cls]}>
+  <div class="wrap page-head__grid">
+    <div class="page-head__copy">
+      {crumbs && <Breadcrumbs crumbs={crumbs} />}
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1>{h1}</h1>
+      {lead && <p class="page-head__promise">{lead}</p>}
+      <slot />
     </div>
+
+    {photo && (
+      <div class="page-head__media">
+        <Photo
+          photo={photo}
+          alt={photoAlt}
+          caption={false}
+          eager
+          crop={[3, 2]}
+          sizes="(min-width: 900px) 52vw, 100vw"
+          widths={[360, 540, 720, 860, 1080, 1280]}
+        />
+      </div>
+    )}
+
+    {meta && meta.length > 0 && (
+      <ul class="page-head__meta">
+        {meta.map((item) => <li>{item}</li>)}
+      </ul>
+    )}
   </div>
 </section>

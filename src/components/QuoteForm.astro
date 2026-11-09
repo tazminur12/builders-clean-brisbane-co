@@ -1,8 +1,9 @@
 ---
 /**
- * Netlify quote form: builder/homeowner toggle, suburb, job type, handover date, plan upload, honeypot.
+ * Netlify quote form — 3-step wizard (details → job → plans).
  * Same field names on every instance so Netlify registers one "quote" form.
  */
+import Icon from './Icon.astro';
 import { SERVICES } from '../data/services';
 import { AREAS } from '../data/areas';
 import { quoteTime } from '../lib/text';
@@ -10,56 +11,358 @@ import { quoteTime } from '../lib/text';
 interface Props { id?: string; job?: string; suburb?: string; who?: 'builder' | 'homeowner' }
 const { id = 'q', job = '', suburb = '', who = 'homeowner' } = Astro.props;
 const f = (n: string) => `${id}-${n}`;
+
+const steps = [
+  { n: 1, label: 'You' },
+  { n: 2, label: 'Job' },
+  { n: 3, label: 'Send' },
+];
 ---
-<form class="form" name="quote" method="POST" action="/thank-you/" enctype="multipart/form-data" data-netlify="true" netlify-honeypot="bot-field">
+<form
+  class="form form--quote form--steps"
+  name="quote"
+  method="POST"
+  action="/thank-you/"
+  enctype="multipart/form-data"
+  data-netlify="true"
+  netlify-honeypot="bot-field"
+  data-quote-form
+>
   <input type="hidden" name="form-name" value="quote" />
   <p class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
 
-  <fieldset>
-    <legend>I am a…</legend>
-    <div class="toggle">
-      <input type="radio" id={f('who-b')} name="who" value="builder" checked={who === 'builder'} />
-      <label for={f('who-b')}>Builder or site manager</label>
-      <input type="radio" id={f('who-h')} name="who" value="homeowner" checked={who === 'homeowner'} />
-      <label for={f('who-h')}>Homeowner or investor</label>
+  <ol class="form-progress" data-progress aria-label="Quote steps">
+    {steps.map((s) => (
+      <li class:list={['form-progress__item', { 'is-active': s.n === 1 }]} data-progress-item={s.n}>
+        <span class="form-progress__n" aria-hidden="true">{s.n}</span>
+        <span class="form-progress__label">{s.label}</span>
+      </li>
+    ))}
+  </ol>
+
+  <!-- Step 1: who + contact -->
+  <div class="form-step is-active" data-step="1" role="group" aria-labelledby={f('step1-h')}>
+    <div class="form-step__head">
+      <p class="form__legend" id={f('step1-h')}>Step 1 — Your details</p>
+      <p class="form-step__sub">Who you are and how we can reach you.</p>
     </div>
-  </fieldset>
 
-  <div class="form-row form-row--2">
-    <div><label for={f('name')}>Your name</label><input id={f('name')} name="name" type="text" autocomplete="name" required /></div>
-    <div><label for={f('phone')}>Phone</label><input id={f('phone')} name="phone" type="tel" autocomplete="tel" inputmode="tel" aria-describedby={f('phone-h')} /><p class="hint" id={f('phone-h')}>Optional, but it helps if we have a quick question.</p></div>
-  </div>
-  <div><label for={f('email')}>Email</label><input id={f('email')} name="email" type="email" autocomplete="email" required /></div>
+    <fieldset class="form__block">
+      <legend class="form__legend form__legend--soft">I am a…</legend>
+      <div class="toggle" role="radiogroup" aria-label="I am a">
+        <input type="radio" id={f('who-b')} name="who" value="builder" checked={who === 'builder' || undefined} />
+        <label for={f('who-b')}>Builder or site manager</label>
+        <input type="radio" id={f('who-h')} name="who" value="homeowner" checked={who === 'homeowner' || undefined} />
+        <label for={f('who-h')}>Homeowner or investor</label>
+      </div>
+    </fieldset>
 
-  <div class="form-row form-row--2 builder-only">
-    <div><label for={f('company')}>Business name</label><input id={f('company')} name="company" type="text" autocomplete="organization" /></div>
-    <div><label for={f('abn')}>ABN</label><input id={f('abn')} name="abn" type="text" inputmode="numeric" /></div>
-  </div>
-
-  <div class="form-row form-row--2">
-    <div>
-      <label for={f('suburb')}>Suburb of the job</label>
-      <input id={f('suburb')} name="suburb" type="text" list={f('suburbs')} value={suburb} autocomplete="address-level2" required />
-      <datalist id={f('suburbs')}>{AREAS.filter((a) => a.kind === 'suburb').map((a) => <option value={a.name} />)}</datalist>
+    <div class="form-row form-row--2">
+      <div class="field">
+        <label for={f('name')}>Your name <span class="req" aria-hidden="true">*</span></label>
+        <input id={f('name')} name="name" type="text" autocomplete="name" required placeholder="Full name" />
+      </div>
+      <div class="field">
+        <label for={f('phone')}>Phone</label>
+        <input id={f('phone')} name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="04xx xxx xxx" aria-describedby={f('phone-h')} />
+        <p class="hint" id={f('phone-h')}>Optional — helpful for a quick question.</p>
+      </div>
     </div>
-    <div>
-      <label for={f('job')}>Type of clean</label>
-      <select id={f('job')} name="job">
-        <option value="Not sure" selected={job === ''}>Not sure yet</option>
-        {SERVICES.map((s) => <option value={s.name} selected={job === s.name}>{s.name}</option>)}
-      </select>
+
+    <div class="field">
+      <label for={f('email')}>Email <span class="req" aria-hidden="true">*</span></label>
+      <input id={f('email')} name="email" type="email" autocomplete="email" required placeholder="name@company.com" />
+    </div>
+
+    <div class="form-row form-row--2 builder-only" data-builder-only hidden={who !== 'builder' || undefined}>
+      <div class="field">
+        <label for={f('company')}>Business name</label>
+        <input id={f('company')} name="company" type="text" autocomplete="organization" placeholder="Company or trading name" />
+      </div>
+      <div class="field">
+        <label for={f('abn')}>ABN</label>
+        <input id={f('abn')} name="abn" type="text" inputmode="numeric" placeholder="XX XXX XXX XXX" autocomplete="off" />
+      </div>
+    </div>
+
+    <div class="form-nav form-nav--end">
+      <button class="btn btn--primary" type="button" data-next>Continue to job details</button>
     </div>
   </div>
 
-  <div class="form-row form-row--2">
-    <div><label for={f('date')}>Handover or move-in date</label><input id={f('date')} name="date" type="date" aria-describedby={f('date-h')} /><p class="hint" id={f('date-h')}>Leave blank if it isn’t set yet.</p></div>
-    <div><label for={f('plans')}>Plans or photos</label><input id={f('plans')} name="plans" type="file" accept=".pdf,.jpg,.jpeg,.png,.heic,.webp" aria-describedby={f('plans-h')} /><p class="hint" id={f('plans-h')}>One PDF or photo, up to 8 MB. Plans help us quote faster.</p></div>
+  <!-- Step 2: job -->
+  <div class="form-step" data-step="2" role="group" aria-labelledby={f('step2-h')}>
+    <div class="form-step__head">
+      <p class="form__legend" id={f('step2-h')}>Step 2 — Job details</p>
+      <p class="form-step__sub">Where and what kind of clean you need.</p>
+    </div>
+
+    <div class="form-row form-row--2">
+      <div class="field">
+        <label for={f('suburb')}>Suburb of the job <span class="req" aria-hidden="true">*</span></label>
+        <input
+          id={f('suburb')}
+          name="suburb"
+          type="text"
+          list={f('suburbs')}
+          value={suburb}
+          autocomplete="address-level2"
+          required
+          placeholder="e.g. North Lakes"
+        />
+        <datalist id={f('suburbs')}>{AREAS.filter((a) => a.kind === 'suburb').map((a) => <option value={a.name} />)}</datalist>
+      </div>
+      <div class="field">
+        <label for={f('job')}>Type of clean</label>
+        <select id={f('job')} name="job">
+          <option value="Not sure" selected={job === '' || undefined}>Not sure yet</option>
+          {SERVICES.map((s) => <option value={s.name} selected={job === s.name || undefined}>{s.name}</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for={f('date')}>Handover or move-in date</label>
+      <input id={f('date')} name="date" type="date" aria-describedby={f('date-h')} />
+      <p class="hint" id={f('date-h')}>Leave blank if it isn’t set yet.</p>
+    </div>
+
+    <div class="form-nav">
+      <button class="btn btn--ghost" type="button" data-back>Back</button>
+      <button class="btn btn--primary" type="button" data-next>Continue to plans</button>
+    </div>
   </div>
 
-  <div><label for={f('notes')}>Anything else we should know?</label><textarea id={f('notes')} name="notes" rows="4" placeholder="Levels, bedrooms and bathrooms, residue, access, after-hours…"></textarea></div>
+  <!-- Step 3: plans + send -->
+  <div class="form-step" data-step="3" role="group" aria-labelledby={f('step3-h')}>
+    <div class="form-step__head">
+      <p class="form__legend" id={f('step3-h')}>Step 3 — Plans & send</p>
+      <p class="form-step__sub">Upload plans if you have them, then send.</p>
+    </div>
 
-  <div>
-    <button class="btn btn--primary" type="submit" style="width:100%">Send for an itemised quote</button>
-    <p class="form-note mt-1">We reply within {quoteTime()}. We only use your details to quote and book your clean. See our <a href="/privacy-policy/">privacy policy</a>.</p>
+    <div class="field">
+      <label class="file-drop" for={f('plans')} data-file-drop>
+        <input
+          id={f('plans')}
+          class="file-drop__input"
+          name="plans"
+          type="file"
+          accept=".pdf,.jpg,.jpeg,.png,.heic,.webp"
+          aria-describedby={f('plans-h')}
+          data-file-input
+        />
+        <span class="file-drop__icon" aria-hidden="true"><Icon name="upload" /></span>
+        <span class="file-drop__copy">
+          <span class="file-drop__title" data-file-label>Upload plans or photos</span>
+          <span class="file-drop__hint" id={f('plans-h')}>PDF or image, up to 8 MB. Optional, but faster quotes.</span>
+        </span>
+      </label>
+      <p class="field__error" data-file-error hidden></p>
+    </div>
+
+    <div class="field">
+      <label for={f('notes')}>Anything else we should know?</label>
+      <textarea
+        id={f('notes')}
+        name="notes"
+        rows="3"
+        placeholder="Levels, bedrooms and bathrooms, residue, access, after-hours…"
+      ></textarea>
+    </div>
+
+    <div class="form-nav">
+      <button class="btn btn--ghost" type="button" data-back>Back</button>
+      <button class="btn btn--primary form__btn" type="submit" data-submit>
+        <Icon name="quote" />
+        <span data-submit-label>Send for an itemised quote</span>
+      </button>
+    </div>
+
+    <p class="form-note">
+      We reply within {quoteTime()}. We only use your details to quote and book your clean.
+      See our <a href="/privacy-policy/">privacy policy</a>.
+    </p>
   </div>
 </form>
+
+<script>
+  const MAX_BYTES = 8 * 1024 * 1024;
+  const TOTAL = 3;
+
+  function syncBuilderFields(form: HTMLFormElement) {
+    const builder = form.querySelector<HTMLInputElement>('input[name="who"][value="builder"]');
+    const block = form.querySelector<HTMLElement>('[data-builder-only]');
+    if (!builder || !block) return;
+    const show = builder.checked;
+    block.hidden = !show;
+    block.classList.toggle('is-visible', show);
+  }
+
+  function setFileUi(form: HTMLFormElement, file: File | null, error = '') {
+    const label = form.querySelector<HTMLElement>('[data-file-label]');
+    const err = form.querySelector<HTMLElement>('[data-file-error]');
+    const drop = form.querySelector<HTMLElement>('[data-file-drop]');
+    if (label) label.textContent = file ? file.name : 'Upload plans or photos';
+    if (drop) drop.classList.toggle('has-file', Boolean(file));
+    if (err) {
+      err.hidden = !error;
+      err.textContent = error;
+    }
+  }
+
+  function getStep(form: HTMLFormElement, n: number) {
+    return form.querySelector<HTMLElement>(`[data-step="${n}"]`);
+  }
+
+  function setStep(form: HTMLFormElement, next: number) {
+    const current = Number(form.dataset.step || '1');
+    for (let i = 1; i <= TOTAL; i++) {
+      const el = getStep(form, i);
+      if (!el) continue;
+      const active = i === next;
+      el.classList.toggle('is-active', active);
+      el.hidden = !active;
+    }
+    form.querySelectorAll<HTMLElement>('[data-progress-item]').forEach((item) => {
+      const n = Number(item.dataset.progressItem);
+      item.classList.toggle('is-active', n === next);
+      item.classList.toggle('is-done', n < next);
+    });
+    form.dataset.step = String(next);
+
+    const focusRoot = getStep(form, next);
+    const focusable = focusRoot?.querySelector<HTMLElement>('input:not([type="hidden"]):not([type="radio"]), select, textarea, button');
+    focusable?.focus({ preventScroll: true });
+
+    if (next !== current) {
+      form.closest('.form-card')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+
+  function validateStep(form: HTMLFormElement, n: number) {
+    const step = getStep(form, n);
+    if (!step) return true;
+    const fields = step.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input, select, textarea');
+    for (const field of fields) {
+      if (field.type === 'radio' || field.type === 'hidden' || field.name === 'bot-field') continue;
+      if (!field.checkValidity()) {
+        field.reportValidity();
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function enhance(form: HTMLFormElement) {
+    if (form.dataset.enhanced === '1') return;
+    form.dataset.enhanced = '1';
+    form.dataset.step = '1';
+    setStep(form, 1);
+
+    form.querySelectorAll<HTMLInputElement>('input[name="who"]').forEach((input) => {
+      input.addEventListener('change', () => syncBuilderFields(form));
+    });
+    syncBuilderFields(form);
+
+    const fileInput = form.querySelector<HTMLInputElement>('[data-file-input]');
+    const drop = form.querySelector<HTMLElement>('[data-file-drop]');
+
+    fileInput?.addEventListener('change', () => {
+      const file = fileInput.files?.[0] ?? null;
+      if (file && file.size > MAX_BYTES) {
+        fileInput.value = '';
+        setFileUi(form, null, 'That file is over 8 MB. Please upload a smaller PDF or photo.');
+        return;
+      }
+      setFileUi(form, file);
+    });
+
+    if (drop && fileInput) {
+      ['dragenter', 'dragover'].forEach((evt) => {
+        drop.addEventListener(evt, (e) => {
+          e.preventDefault();
+          drop.classList.add('is-drag');
+        });
+      });
+      ['dragleave', 'drop'].forEach((evt) => {
+        drop.addEventListener(evt, (e) => {
+          e.preventDefault();
+          drop.classList.remove('is-drag');
+        });
+      });
+      drop.addEventListener('drop', (e) => {
+        const dt = (e as DragEvent).dataTransfer;
+        const file = dt?.files?.[0];
+        if (!file) return;
+        const transfer = new DataTransfer();
+        transfer.items.add(file);
+        fileInput.files = transfer.files;
+        fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    }
+
+    form.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement | null;
+      const nextBtn = t?.closest<HTMLButtonElement>('[data-next]');
+      const backBtn = t?.closest<HTMLButtonElement>('[data-back]');
+      const step = Number(form.dataset.step || '1');
+
+      if (nextBtn) {
+        e.preventDefault();
+        if (!validateStep(form, step)) return;
+        if (step < TOTAL) setStep(form, step + 1);
+      }
+      if (backBtn) {
+        e.preventDefault();
+        if (step > 1) setStep(form, step - 1);
+      }
+    });
+
+    form.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      const target = e.target as HTMLElement | null;
+      if (!target || target.tagName === 'TEXTAREA' || target.tagName === 'BUTTON') return;
+      const step = Number(form.dataset.step || '1');
+      if (step < TOTAL) {
+        e.preventDefault();
+        if (!validateStep(form, step)) return;
+        setStep(form, step + 1);
+      }
+    });
+
+    form.addEventListener('submit', (e) => {
+      const step = Number(form.dataset.step || '1');
+      if (step !== TOTAL) {
+        e.preventDefault();
+        if (!validateStep(form, step)) return;
+        setStep(form, Math.min(TOTAL, step + 1));
+        return;
+      }
+      if (!form.checkValidity()) {
+        e.preventDefault();
+        // Jump to first invalid step
+        for (let i = 1; i <= TOTAL; i++) {
+          if (!validateStep(form, i)) {
+            setStep(form, i);
+            return;
+          }
+        }
+        return;
+      }
+      const btn = form.querySelector<HTMLButtonElement>('[data-submit]');
+      const label = form.querySelector<HTMLElement>('[data-submit-label]');
+      if (btn) {
+        btn.disabled = true;
+        btn.setAttribute('aria-busy', 'true');
+      }
+      if (label) label.textContent = 'Sending…';
+    });
+  }
+
+  function init() {
+    document.querySelectorAll<HTMLFormElement>('[data-quote-form]').forEach(enhance);
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

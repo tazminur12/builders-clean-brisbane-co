@@ -12,5 +12,13 @@ const defaults = [
 const { steps = defaults } = Astro.props;
 ---
 <ol class:list={['steps', { 'steps--5': steps.length === 5 }]}>
-  {steps.map((s) => <li><h3>{s.h}</h3><p>{s.p}</p></li>)}
+  {steps.map((s) => (
+    <li class="steps__item">
+      <div class="step">
+        <span class="step__n" aria-hidden="true"></span>
+        <h3 class="step__title">{s.h}</h3>
+        <p class="step__text">{s.p}</p>
+      </div>
+    </li>
+  ))}
 </ol>

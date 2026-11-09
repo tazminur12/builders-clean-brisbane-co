@@ -53,6 +53,7 @@ export const AREA_FAQ_BANK: Faq[] = [
   { q: 'Are you insured and do your crews hold white cards?', a: 'Public liability of {{INSURANCE}}, white cards and police checks are confirmed per crew, and documents are available on request.{{?credentials}}' },
   { q: 'What if something is missed?', a: 'Tell us within {{RECLEAN}} and we return to re-clean any in-scope item.' },
   { q: 'Do you travel to every suburb?', a: 'Yes, within our service areas. A travel charge may apply for smaller jobs, and it is shown in the quote.{{?travel}}' },
+  { q: 'What if my suburb is not listed?', a: 'Put the suburb in the [quote form](/contact/) anyway. If we cover it, we confirm in the reply; if travel applies, it is shown as its own line before you book.{{?travel}}' },
 ];
 
 export const REGIONS: Region[] = [

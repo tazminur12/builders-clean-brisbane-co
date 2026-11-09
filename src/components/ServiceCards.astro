@@ -6,18 +6,28 @@ const groups = Object.keys(SERVICE_GROUPS) as ServiceGroup[];
 const H = headingLevel;
 const Sub = headingLevel === 'h2' ? 'h3' : 'h4';
 ---
-{groups.map((g) => (
-  <div class="mb-3">
-    <H style="margin-bottom:6px">{SERVICE_GROUPS[g].label}</H>
-    {showBlurb && <p class="muted">{SERVICE_GROUPS[g].blurb}</p>}
-    <div class="grid grid--3 mt-1">
-      {SERVICES.filter((s) => s.group === g).map((s) => (
-        <a class="card card--link" href={serviceUrl(s.slug)}>
-          <Sub style="margin:0;font-size:22px;font-weight:600">{s.name}</Sub>
-          <p>{s.summary}</p>
-          <span class="card__more" aria-hidden="true">Details</span>
-        </a>
-      ))}
-    </div>
-  </div>
-))}
+<div class="svc-groups">
+  {groups.map((g) => {
+    const items = SERVICES.filter((s) => s.group === g);
+    return (
+      <section class="svc-group" id={`svc-group-${g}`} aria-labelledby={`svc-group-title-${g}`}>
+        <div class="svc-group__head">
+          <div class="svc-group__title-row">
+            <H id={`svc-group-title-${g}`} class="svc-group__title">{SERVICE_GROUPS[g].label}</H>
+            <span class="svc-group__count">{items.length} {items.length === 1 ? 'service' : 'services'}</span>
+          </div>
+          {showBlurb && <p class="svc-group__blurb">{SERVICE_GROUPS[g].blurb}</p>}
+        </div>
+        <div class="svc-group__grid">
+          {items.map((s) => (
+            <a class="svc-card" href={serviceUrl(s.slug)}>
+              <Sub class="svc-card__title">{s.name}</Sub>
+              <p class="svc-card__summary">{s.summary}</p>
+              <span class="svc-card__more" aria-hidden="true">View service</span>
+            </a>
+          ))}
+        </div>
+      </section>
+    );
+  })}
+</div>

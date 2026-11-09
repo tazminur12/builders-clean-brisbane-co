@@ -6,7 +6,6 @@ import TrustStrip from '../components/TrustStrip.astro';
 import StageDiagram from '../components/StageDiagram.astro';
 import ServiceCards from '../components/ServiceCards.astro';
 import Steps from '../components/Steps.astro';
-import MapFacade from '../components/MapFacade.astro';
 import Testimonials from '../components/Testimonials.astro';
 import Faq from '../components/Faq.astro';
 import CtaBand from '../components/CtaBand.astro';
@@ -101,9 +100,9 @@ const priceFactors = [
   <TrustStrip />
 
   <!-- Three stages -->
-  <section class="section section--mist" aria-labelledby="stages-h">
+  <section class="section section--mist stages-section" aria-labelledby="stages-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head stages-section__head">
         <p class="eyebrow">The three stages</p>
         <h2 id="stages-h">Builders cleaning in Brisbane, stage by stage</h2>
         <p>
@@ -117,46 +116,69 @@ const priceFactors = [
   </section>
 
   <!-- Services grid -->
-  <section class="section" aria-labelledby="svc-h">
+  <section class="section svc-section" aria-labelledby="svc-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head svc-section__head">
         <p class="eyebrow">Services</p>
         <h2 id="svc-h">Every builders clean, from first fix to the keys</h2>
         <p>Seventeen services, grouped by what you need. Each page lists exactly what is included and how we price it.</p>
       </div>
       <ServiceCards />
-      <p><a class="btn btn--ghost" href="/services/">All builders cleaning services</a></p>
+      <p class="svc-section__cta"><a class="btn btn--ghost" href="/services/">All builders cleaning services</a></p>
     </div>
   </section>
 
   <!-- Flexibility -->
-  <section class="section section--soft" aria-labelledby="flex-h">
-    <div class="wrap split split--center">
-      <div>
+  <section class="section section--mist flex-section" aria-labelledby="flex-h">
+    <div class="wrap flex-section__grid">
+      <div class="flex-section__copy">
         <p class="eyebrow">Why builders call us back</p>
         <h2 id="flex-h">Trades run late. Handover dates move. We move with them.</h2>
-        <p>
+        <p class="flex-section__lead">
           The thing customers praise most in every set of builders cleaning reviews we studied is flexibility: a crew that still turns up when the
           plasterer runs two days over and the handover date moves. We build our schedule for that.
         </p>
-        <p>
-          You send the plans and the date. We confirm the slot in writing and send a reminder before the crew arrives. If the program moves, you
-          tell one contact and we re-book, without starting again. On the day, a supervisor checks the job against the checklist, and the photo
-          report lands in your inbox before you have to ask.
-        </p>
-        <p>
+        <ul class="flex-section__points">
+          <li>
+            <span class="flex-section__point-n" aria-hidden="true">01</span>
+            <span>You send the plans and the date. We confirm the slot in writing and remind you before the crew arrives.</span>
+          </li>
+          <li>
+            <span class="flex-section__point-n" aria-hidden="true">02</span>
+            <span>If the program moves, tell one contact — we re-book without starting again.</span>
+          </li>
+          <li>
+            <span class="flex-section__point-n" aria-hidden="true">03</span>
+            <span>On the day, a supervisor checks the checklist and the photo report lands before you ask.</span>
+          </li>
+        </ul>
+        <p class="flex-section__note">
           For homeowners, the same planning means the clean lands between handover and move-in, not on top of the removalist. For builders, it
           means cleaning drops off the defects list.
         </p>
+        <p class="flex-section__cta">
+          <a class="btn btn--primary" href="/for-builders/">Builder accounts</a>
+          <a class="btn btn--ghost" href="/contact/#quote">Get a free quote</a>
+        </p>
       </div>
-      <Photo photo="new-home" alt="New home cleaned before move-in by a builders clean crew in Brisbane" />
+      <div class="flex-section__media">
+        <Photo
+          photo="new-home"
+          caption={false}
+          crop={[3, 4]}
+          class="flex-section__img"
+          sizes="(min-width: 900px) 45vw, 100vw"
+          widths={[360, 540, 720, 860, 1080]}
+          alt="New home cleaned before move-in by a builders clean crew in Brisbane"
+        />
+      </div>
     </div>
   </section>
 
   <!-- How it works -->
-  <section class="section section--teal on-teal" aria-labelledby="how-h">
+  <section class="section section--teal on-teal how-section" aria-labelledby="how-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head how-section__head">
         <p class="eyebrow">How it works</p>
         <h2 id="how-h">From plans to sign-off in five steps</h2>
         <p>Missed something? Tell us within {recleanTime()} and we come back to re-clean any in-scope item.</p>
@@ -166,10 +188,10 @@ const priceFactors = [
   </section>
 
   <!-- Price factors -->
-  <section class="section" aria-labelledby="price-h">
+  <section class="section section--soft price-section" aria-labelledby="price-h">
     <div class="wrap">
-      <div>
-        <div class="section-head">
+      <div class="price-section__intro">
+        <div class="section-head price-section__head">
           <p class="eyebrow">Pricing</p>
           <h2 id="price-h">What changes the price of a builders clean</h2>
           <p>
@@ -177,51 +199,87 @@ const priceFactors = [
             on the same scope. Two homes with the same number of bedrooms can need very different amounts of work.
           </p>
           <p>Our <a href="/builders-clean-cost-brisbane/">builders clean cost guide</a> sets out starting prices by property size and stage.</p>
-          <p><a class="btn btn--primary" href="/builders-clean-cost-brisbane/">See the price guide</a></p>
         </div>
-        <dl class="grid grid--4" style="margin:0">
-          {priceFactors.map(([k, v]) => (
-            <div class="card"><dt class="card__dt">{k}</dt><dd style="margin:0">{v}</dd></div>
-          ))}
-        </dl>
+        <p class="price-section__cta">
+          <a class="btn btn--primary" href="/builders-clean-cost-brisbane/">See the price guide</a>
+          <a class="btn btn--ghost" href="/contact/#quote">Get a free quote</a>
+        </p>
       </div>
+      <dl class="price-factors">
+        {priceFactors.map(([k, v], i) => (
+          <div class="price-factor">
+            <dt>
+              <span class="price-factor__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+              <span class="price-factor__title">{k}</span>
+            </dt>
+            <dd class="price-factor__text">{v}</dd>
+          </div>
+        ))}
+      </dl>
     </div>
   </section>
 
   <!-- Our work -->
-  <section class="section section--mist" aria-labelledby="work-h">
+  <section class="section section--mist work-section" aria-labelledby="work-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head work-section__head">
         <p class="eyebrow">Our work</p>
         <h2 id="work-h">Real Brisbane jobs, cleaned by our crew</h2>
         <p>Polished concrete, black tile, timber stairs and big glass: the finishes that show every speck of dust. No stock photos.</p>
       </div>
-      <div class="photo-grid photo-grid--3">
-        {work.map((k) => <Photo photo={k} sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw" />)}
+      <div class="work-gallery">
+        {work.map((k) => (
+          <div class="work-gallery__item">
+            <Photo
+              photo={k}
+              crop={[4, 3]}
+              class="work-gallery__photo"
+              sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw"
+              widths={[360, 540, 720, 860]}
+            />
+          </div>
+        ))}
       </div>
-      <p class="mt-2"><a href="/our-work/">See all builders clean photos</a></p>
+      <p class="work-section__cta">
+        <a class="btn btn--ghost" href="/our-work/">See all builders clean photos</a>
+      </p>
     </div>
   </section>
 
   <!-- Areas -->
-  <section class="section" aria-labelledby="areas-h">
+  <section class="section section--soft areas-section" aria-labelledby="areas-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head areas-section__head">
         <p class="eyebrow">Areas we cover</p>
         <h2 id="areas-h">Builders cleaning across Greater Brisbane</h2>
-        <p>From inner-city apartments to the new estates in the growth corridors. <a href="/areas/">See all service areas</a>.</p>
+        <p>From inner-city apartments to the new estates in the growth corridors — five regions, one crew standard.</p>
       </div>
-      <div class="split">
-        <div class="area-cols" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
-          {REGIONS.map((r) => (
-            <div>
-              <h3><a href={areaUrl(r.slug)}>{r.name}</a></h3>
-              <ul class="link-list">{SUBURBS.filter((s) => s.region === r.slug).map((s) => <li><a href={areaUrl(s.slug)}>{s.name}</a></li>)}</ul>
-            </div>
-          ))}
-        </div>
-        <MapFacade />
+      <div class="areas-grid">
+        {REGIONS.map((r) => {
+          const suburbs = SUBURBS.filter((s) => s.region === r.slug);
+          return (
+            <article class="area-card">
+              <h3 class="area-card__title"><a href={areaUrl(r.slug)}>{r.name}</a></h3>
+              <p class="area-card__blurb">{r.blurb}</p>
+              {suburbs.length > 0 && (
+                <ul class="area-card__subs">
+                  {suburbs.map((s) => (
+                    <li><a href={areaUrl(s.slug)}>{s.name}</a></li>
+                  ))}
+                </ul>
+              )}
+              {r.slug === 'redland' && suburbs.length === 0 && (
+                <p class="area-card__note">Redlands suburbs: ask when you book</p>
+              )}
+              <a class="area-card__more" href={areaUrl(r.slug)}>View {r.name}</a>
+            </article>
+          );
+        })}
       </div>
+      <p class="areas-section__cta">
+        <a class="btn btn--primary" href="/areas/">See all service areas</a>
+        <a class="btn btn--ghost" href="/contact/#quote">Get a free quote</a>
+      </p>
     </div>
   </section>
 
@@ -245,17 +303,21 @@ const priceFactors = [
   )}
 
   <!-- FAQ -->
-  <section class="section" aria-labelledby="faq-h">
-    <div class="wrap wrap--narrow">
-      <div class="section-head">
+  <section class="section section--mist faq-section" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head faq-section__head">
         <p class="eyebrow">FAQ</p>
         <h2 id="faq-h">Builders clean questions</h2>
+        <p>Straight answers on scope, timing, access and what happens if something is missed.</p>
       </div>
-      <Faq faqs={HOME_FAQS} />
-      <p class="mt-2">More answers in the <a href="/faq/">builders clean FAQ</a>.</p>
-      <p class="lead mt-2">
-        Looking for a builders clean in Brisbane that turns up on the date and leaves nothing on the defects list? Send us the plans.
-      </p>
+      <Faq faqs={HOME_FAQS} openFirst columns={2} />
+      <div class="faq-section__foot">
+        <p>More answers in the <a href="/faq/">builders clean FAQ</a>.</p>
+        <p class="faq-section__cta">
+          <a class="btn btn--primary" href="/contact/#quote">Get a free quote</a>
+          <a class="btn btn--ghost" href="/faq/">All FAQ answers</a>
+        </p>
+      </div>
     </div>
   </section>
 

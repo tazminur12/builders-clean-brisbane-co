@@ -4,6 +4,7 @@ import PageHead from '../components/PageHead.astro';
 import Photo from '../components/Photo.astro';
 import TrustStrip from '../components/TrustStrip.astro';
 import CtaBand from '../components/CtaBand.astro';
+import CtaButtons from '../components/CtaButtons.astro';
 import { SITE, isSet } from '../config/site';
 import { PHOTOS } from '../data/photos';
 import { breadcrumbList } from '../lib/schema';
@@ -11,6 +12,22 @@ import { quoteTime, recleanTime, insuranceText, rich } from '../lib/text';
 
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'About', href: '/about/' }];
 const owner = isSet(SITE.ownerName) ? SITE.ownerName : '[OWNER / SUPERVISOR NAME — TBC]';
+
+const standards = [
+  'A written, room-by-room checklist on every job',
+  `Itemised quotes within ${quoteTime()}`,
+  'A supervisor walk before sign-off',
+  'A before-and-after photo report',
+  `In-scope items re-cleaned if reported within ${recleanTime()}`,
+  'Surface-safe products for stone, glass, stainless and polished concrete',
+];
+
+const links = [
+  { href: '/services/', label: 'Services', text: 'Seventeen builders cleaning services, from rough to sparkle.' },
+  { href: '/areas/', label: 'Areas', text: 'Brisbane City to the growth corridors — find your suburb.' },
+  { href: '/our-work/', label: 'Our work', text: 'Real Brisbane jobs. No stock photos.' },
+  { href: '/for-builders/', label: 'For builders', text: 'Programs, documents and account pricing.' },
+];
 ---
 <BaseLayout
   title="About Builders Clean Brisbane Co. | Brisbane Builders Cleaners"
@@ -18,25 +35,36 @@ const owner = isSet(SITE.ownerName) ? SITE.ownerName : '[OWNER / SUPERVISOR NAME
   schema={[breadcrumbList(crumbs)]}
   ogImage={PHOTOS['stairs'].src}
 >
-  <PageHead crumbs={crumbs} h1="About Builders Clean Brisbane Co." eyebrow="Brisbane builders cleaners" photo="stairs" photoAlt="Timber stairs cleaned by the Builders Clean Brisbane Co. crew after construction">
+  <PageHead
+    crumbs={crumbs}
+    h1="About Builders Clean Brisbane Co."
+    eyebrow="Brisbane builders cleaners"
+    photo="stairs"
+    photoAlt="Timber stairs cleaned by the Builders Clean Brisbane Co. crew after construction"
+    meta={[
+      'Builders cleans only',
+      'Builders and homeowners',
+      'Brisbane to the growth corridors',
+    ]}
+  >
     <div class="answer">
       <p>
-        Builders Clean Brisbane Co. is a Brisbane builders clean company that only does builders and post construction cleaning, for builders
-        and homeowners across Brisbane, Moreton Bay, Logan, Ipswich and the Redlands. Our promise is simple: on the handover date, to handover
-        standard, with photos to prove it.
+        On the handover date, to handover standard, with photos to prove it — builders and post construction cleaning only.
       </p>
     </div>
+    <CtaButtons on="teal" showWhatsapp heroFallback class="mt-2" />
   </PageHead>
   <TrustStrip />
 
-  <section class="section" aria-labelledby="story-h">
-    <div class="wrap split">
-      <div class="stack">
-        <h2 id="story-h">Our story</h2>
-        <p>[FOUNDING YEAR / STORY — TBC]</p>
+  <section class="section about-story" aria-labelledby="story-h">
+    <div class="wrap about-story__grid">
+      <div class="about-story__copy">
+        <p class="eyebrow">Our story</p>
+        <h2 id="story-h">Built for one kind of clean</h2>
+        <p class="about-story__tbc">[FOUNDING YEAR / STORY — TBC]</p>
         <!-- TODO: owner or supervisor photo and short story (real photo only). -->
-        <p><strong>Who you will deal with:</strong> {owner}</p>
-        <h2 class="mt-3">Why we only do builders cleans</h2>
+        <p class="about-story__owner"><strong>Who you will deal with:</strong> {owner}</p>
+        <h3>Why we only do builders cleans</h3>
         <p>
           A builders clean is a different job from a house clean or a bond clean. Fine plaster dust settles inside every cupboard, cement haze
           clings to new tiles, and stone, glass and polished concrete mark easily if the wrong product touches them. Doing one kind of clean,
@@ -47,46 +75,83 @@ const owner = isSet(SITE.ownerName) ? SITE.ownerName : '[OWNER / SUPERVISOR NAME
           plain language, with a quote that says exactly what is included.
         </p>
       </div>
-      <Photo photo="pantry" />
+      <div class="about-story__media">
+        <Photo
+          photo="pantry"
+          crop={[4, 5]}
+          class="about-story__img"
+          sizes="(min-width: 900px) 42vw, 100vw"
+          widths={[360, 540, 720, 860]}
+          alt="Pantry shelves cleaned after construction dust by Builders Clean Brisbane Co."
+        />
+      </div>
     </div>
   </section>
 
-  <section class="section section--mist" aria-labelledby="trades-h">
-    <div class="wrap split">
-      <div>
+  <section class="section section--mist about-split" aria-labelledby="trades-h">
+    <div class="wrap about-split__grid">
+      <article class="about-split__card">
+        <p class="about-split__n" aria-hidden="true">01</p>
         <h2 id="trades-h">How we work with trades</h2>
         <p>
           We clean after the plasterer and before the painter, after the last trade and before the inspection. We book into the builder’s
-          program, keep out of the way of trades still on site, and move with the program when it changes. Builders get one contact who answers
-          the phone. See <a href="/for-builders/">our page for builders</a>.
+          program, keep out of the way of trades still on site, and move when the program changes. Builders get one contact who answers the
+          phone.
         </p>
-      </div>
-      <div>
+        <p class="about-split__link"><a href="/for-builders/">Our page for builders</a></p>
+      </article>
+      <article class="about-split__card">
+        <p class="about-split__n" aria-hidden="true">02</p>
         <h2>Our standards</h2>
         <ul class="ticks">
-          <li>A written, room-by-room checklist on every job</li>
-          <li>Itemised quotes within {quoteTime()}</li>
-          <li>A supervisor walk before sign-off</li>
-          <li>A before-and-after photo report</li>
-          <li>In-scope items re-cleaned if reported within {recleanTime()}</li>
-          <li>Surface-safe products for stone, glass, stainless and polished concrete</li>
+          {standards.map((s) => <li>{s}</li>)}
         </ul>
+      </article>
+    </div>
+  </section>
+
+  <section class="section about-cred" aria-labelledby="cred-h">
+    <div class="wrap about-cred__grid">
+      <article class="about-cred__card">
+        <p class="eyebrow">Credentials</p>
+        <h2 id="cred-h">Insured, documented, site-ready</h2>
+        <p set:html={rich(`Public liability insurance: ${insuranceText()}. White cards, police checks and SWMS on request.{{?credentials}}`)} />
+        <p>We only list credentials we hold. If your site needs something specific, ask and we will tell you straight.</p>
+      </article>
+      <article class="about-cred__card">
+        <p class="eyebrow">Local</p>
+        <h2>Brisbane based</h2>
+        <p>
+          We work across Greater Brisbane. Our photos are from our own Brisbane jobs, our crews know Brisbane’s humidity and storm season, and
+          our service areas run from the inner city to the growth estates.
+        </p>
+        <p class="about-cred__links">
+          <a href="/areas/">Areas we cover</a>
+          <a href="/our-work/">Our work</a>
+          <a href="/">Builders clean Brisbane</a>
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section section--soft about-links" aria-labelledby="explore-h">
+    <div class="wrap">
+      <div class="section-head about-links__head">
+        <p class="eyebrow">Explore</p>
+        <h2 id="explore-h">Where to go next</h2>
+        <p>Services, areas, photos or the builder account path — pick what you need.</p>
+      </div>
+      <div class="about-links__grid">
+        {links.map((l) => (
+          <a class="svc-card" href={l.href}>
+            <h3 class="svc-card__title">{l.label}</h3>
+            <p class="svc-card__summary">{l.text}</p>
+            <span class="svc-card__more" aria-hidden="true">Open</span>
+          </a>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="cred-h">
-    <div class="wrap wrap--narrow">
-      <h2 id="cred-h">Credentials</h2>
-      <p set:html={rich(`Public liability insurance: ${insuranceText()}. White cards, police checks and SWMS on request.{{?credentials}}`)} />
-      <p>We only list credentials we hold. If your site needs something specific, ask and we will tell you straight.</p>
-      <h2 class="mt-3">Brisbane based</h2>
-      <p>
-        We are a Brisbane business working across Greater Brisbane. Our photos are from our own Brisbane jobs, our crews know Brisbane’s
-        humidity and storm season, and our service areas run from the inner city to the growth estates. See the <a href="/areas/">areas we cover</a>,
-        our <a href="/our-work/">work</a> and our <a href="/services/">builders cleaning services</a>, or start from <a href="/">builders clean Brisbane</a>.
-      </p>
-    </div>
-  </section>
   <CtaBand />
 </BaseLayout>

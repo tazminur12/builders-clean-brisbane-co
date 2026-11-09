@@ -14,7 +14,7 @@ import CtaBand from '../../components/CtaBand.astro';
 import { AREAS, AREA_FAQ_BANK, areaBySlug, areaUrl, regionBySlug, SUBURBS, type Area } from '../../data/areas';
 import { SERVICES, serviceBySlug, serviceUrl } from '../../data/services';
 import { PHOTOS } from '../../data/photos';
-import { rich, plain } from '../../lib/text';
+import { rich, plain, quoteTime } from '../../lib/text';
 import { serviceSchema, areaServedFor, breadcrumbList } from '../../lib/schema';
 
 export const getStaticPaths = (() => AREAS.map((a) => ({ params: { slug: a.slug } }))) satisfies GetStaticPaths;
@@ -30,10 +30,9 @@ const crumbs = [
 const where = a.slug === 'redland' ? 'the Redlands' : a.name;
 const services = a.services.map(serviceBySlug);
 const faqs = [...a.faqs, ...AREA_FAQ_BANK];
-const suburbs = a.kind === 'region' ? a.suburbs.map((s) => SUBURBS.find((x) => x.slug === s)!) : [];
-// Body photo: the first real photo from this area's services that differs from the head photo.
+const suburbs = a.kind === 'region' ? a.suburbs.map((s) => SUBURBS.find((x) => x.slug === s)!).filter(Boolean) : [];
 const bodyPhoto = services.flatMap((x) => x.photos).find((ph) => ph.key !== a.photo.key) ?? { key: a.photo.key, alt: a.photo.alt };
-const nearby = a.kind === 'suburb' ? a.nearby.map((s) => SUBURBS.find((x) => x.slug === s)!) : [];
+const nearby = a.kind === 'suburb' ? a.nearby.map((s) => SUBURBS.find((x) => x.slug === s)!).filter(Boolean) : [];
 
 const schema = [
   breadcrumbList(crumbs),
@@ -46,44 +45,83 @@ const schema = [
   }),
 ];
 
+const pains = [
+  'Handover is Friday and the place still looks like a site.',
+  'The builder said it was cleaned, but there’s dust in every cupboard.',
+  'Will the cleaner actually turn up on the day?',
+];
+
 const inc = [
   { group: 'Top to bottom', items: ['Dust off ceilings, fans, light fittings and vents', 'Doors, frames, handles and switch plates', 'Skirting and walls spot-cleaned'] },
   { group: 'Glass and frames', items: ['Windows, frames, tracks and sills', 'Stickers and light paint off the glass', 'Mirrors and shower screens'] },
   { group: 'Kitchens and wet areas', items: ['Cupboards and drawers wiped inside', 'Benchtops, splashbacks and appliances', 'Tiles, grout, showers, basins and toilets'] },
   { group: 'Floors and sign-off', items: ['Floors cleaned to suit the surface', 'Supervisor walk against the checklist', 'Photo report'] },
 ];
+
+const metaBits =
+  a.kind === 'region'
+    ? [
+        a.suburbs.length > 0 ? `${a.suburbs.length} suburb pages` : 'Ask us about your suburb',
+        `Quotes within ${quoteTime()}`,
+        'Photo report on every job',
+      ]
+    : [
+        `${region.name} service area`,
+        `Quotes within ${quoteTime()}`,
+        'Confirmed date in writing',
+      ];
 ---
 <BaseLayout title={a.title} description={plain(a.meta)} schema={schema} ogImage={PHOTOS[a.photo.key].src}>
-  <PageHead crumbs={crumbs} h1={a.h1} eyebrow={a.kind === 'region' ? 'Service region' : `${region.name} service area`} photo={a.photo.key} photoAlt={a.photo.alt}>
-    <div class="answer"><p set:html={rich(a.intro)} /></div>
-    <CtaButtons on="teal" showWhatsapp class="mt-2" />
-    <p class="cta-card__upload" style="color:var(--c-on-teal-sub)"><Icon name="upload" /><span><a href="/contact/#quote" style="color:var(--c-lime)">Upload plans or photos</a> for a faster quote.</span></p>
+  <PageHead
+    crumbs={crumbs}
+    h1={a.h1}
+    eyebrow={a.kind === 'region' ? 'Service region' : `${region.name} service area`}
+    photo={a.photo.key}
+    photoAlt={a.photo.alt}
+    meta={metaBits}
+  >
+    <div class="answer">
+      <p>{a.blurb}</p>
+    </div>
+    <CtaButtons on="teal" showWhatsapp heroFallback class="mt-2" />
+    <p class="page-head__upload">
+      <Icon name="upload" />
+      <span><a href="/contact/#quote">Upload plans or photos</a> for a faster quote.</span>
+    </p>
   </PageHead>
 
   <TrustStrip />
 
-  <section class="section section--mist" aria-labelledby="pains-h">
+  <section class="section section--soft area-intro" aria-labelledby="intro-h">
+    <div class="wrap area-intro__inner">
+      <p class="eyebrow">About this area</p>
+      <h2 id="intro-h" class="sr-only">Builders clean in {where}</h2>
+      <div class="answer area-intro__copy">
+        <p set:html={rich(a.intro)} />
+      </div>
+    </div>
+  </section>
+
+  <section class="section builders-pains" aria-labelledby="pains-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head builders-pains__head">
         <p class="eyebrow">Sound familiar?</p>
         <h2 id="pains-h">Why people in {where} call us</h2>
+        <p>
+          Every job in {where} gets a confirmed date in writing, a room-by-room scope, a supervisor check and a photo report. If your program
+          moves, tell us and we move with it.
+        </p>
       </div>
       <ul class="pains">
-        <li>Handover is Friday and the place still looks like a site.</li>
-        <li>The builder said it was cleaned, but there’s dust in every cupboard.</li>
-        <li>Will the cleaner actually turn up on the day?</li>
+        {pains.map((t) => <li>{t}</li>)}
       </ul>
-      <p class="lead" style="max-width:70ch">
-        Every job in {where} gets a confirmed date in writing, a room-by-room scope, a supervisor check and a photo report. If your
-        program moves, tell us and we move with it.
-      </p>
     </div>
   </section>
 
   {a.kind === 'suburb' ? (
-    <section class="section" aria-labelledby="local-h">
-      <div class="wrap split">
-        <div class="stack">
+    <section class="section section--mist area-local" aria-labelledby="local-h">
+      <div class="wrap area-local__grid">
+        <div class="area-local__copy">
           <p class="eyebrow">Local work</p>
           <h2 id="local-h">Post construction cleaning in {a.name}</h2>
           <p>{a.localAngle}</p>
@@ -91,45 +129,68 @@ const inc = [
           <p>{a.whatWeSee}</p>
           <h3>Planning your builders clean in {a.name}</h3>
           <p set:html={rich(a.planning)} />
-          <p>
-            {a.name} is part of our <a href={areaUrl(region.slug)}>builders clean {region.name}</a> area. We are a Brisbane company, and
-            {a.name} jobs are booked and supervised the same way as everywhere else we work.
+          <p class="area-local__foot">
+            {a.name} is part of our <a href={areaUrl(region.slug)}>builders clean {region.name}</a> area. Jobs here are booked and supervised
+            the same way as everywhere else we work.
           </p>
         </div>
-        <Photo photo={bodyPhoto.key} alt={bodyPhoto.alt} />
+        <div class="area-local__media">
+          <Photo
+            photo={bodyPhoto.key}
+            alt={bodyPhoto.alt}
+            crop={[4, 5]}
+            class="area-local__img"
+            sizes="(min-width: 900px) 42vw, 100vw"
+            widths={[360, 540, 720, 860]}
+          />
+        </div>
       </div>
     </section>
   ) : (
-    <section class="section" aria-labelledby="local-h">
-      <div class="wrap split">
-        <div class="stack">
+    <section class="section section--mist area-local" aria-labelledby="local-h">
+      <div class="wrap area-local__grid">
+        <div class="area-local__copy">
+          <p class="eyebrow">Local work</p>
           {a.sections.map((sec, i) => (
-            <div>
+            <div class="area-local__block">
               <h2 id={i === 0 ? 'local-h' : undefined}>{sec.h2}</h2>
               {sec.paras.map((p) => <p set:html={rich(p)} />)}
             </div>
           ))}
         </div>
-        <Photo photo={bodyPhoto.key} alt={bodyPhoto.alt} />
+        <div class="area-local__media">
+          <Photo
+            photo={bodyPhoto.key}
+            alt={bodyPhoto.alt}
+            crop={[4, 5]}
+            class="area-local__img"
+            sizes="(min-width: 900px) 42vw, 100vw"
+            widths={[360, 540, 720, 860]}
+          />
+        </div>
       </div>
     </section>
   )}
 
   {a.kind === 'region' && (
-    <section class="section section--soft" aria-labelledby="subs-h">
+    <section class="section area-subs" aria-labelledby="subs-h">
       <div class="wrap">
         <div class="section-head">
           <p class="eyebrow">Suburbs</p>
           <h2 id="subs-h">Builders clean suburbs in {where}</h2>
-          {suburbs.length === 0 && <p>We do not have suburb pages for the Redlands yet. Send your suburb with your quote request and we will confirm.</p>}
+          {suburbs.length === 0 ? (
+            <p>We do not have suburb pages for the Redlands yet. Send your suburb with your quote request and we will confirm.</p>
+          ) : (
+            <p>Open a suburb for local detail, planning notes and nearby areas.</p>
+          )}
         </div>
         {suburbs.length > 0 && (
-          <div class="grid grid--3">
+          <div class="area-subs__grid">
             {suburbs.map((s) => (
-              <a class="card card--link" href={areaUrl(s.slug)}>
-                <h3>Builders clean {s.name}</h3>
-                <p class="small">{s.blurb}</p>
-                <span class="card__more" aria-hidden="true">{s.name}</span>
+              <a class="svc-card" href={areaUrl(s.slug)}>
+                <h3 class="svc-card__title">Builders clean {s.name}</h3>
+                <p class="svc-card__summary">{s.blurb}</p>
+                <span class="svc-card__more" aria-hidden="true">View {s.name}</span>
               </a>
             ))}
           </div>
@@ -138,90 +199,111 @@ const inc = [
     </section>
   )}
 
-  <section class="section" aria-labelledby="inc-h">
+  <section class="section section--soft area-scope" aria-labelledby="inc-h">
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow">Scope</p>
         <h2 id="inc-h">What a builders clean in {where} includes</h2>
-        <p>A full final clean covers the list below. Your quote confirms the exact scope, room by room. See the full <a href="/builders-clean-checklist/">builders clean checklist</a>.</p>
+        <p>
+          A full final clean covers the list below. Your quote confirms the exact scope, room by room. See the full
+          <a href="/builders-clean-checklist/">builders clean checklist</a>.
+        </p>
       </div>
       <div class="checklist-grid">
         {inc.map((g) => (
-          <div class="check-group"><h3>{g.group}</h3><ul class="ticks">{g.items.map((i) => <li>{i}</li>)}</ul></div>
+          <div class="check-group">
+            <h3>{g.group}</h3>
+            <ul class="ticks">{g.items.map((i) => <li>{i}</li>)}</ul>
+          </div>
         ))}
       </div>
     </div>
   </section>
 
-  <section class="section section--teal on-teal" aria-labelledby="how-h">
+  <section class="section section--teal on-teal how-section" aria-labelledby="how-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head how-section__head">
         <p class="eyebrow">How it works</p>
         <h2 id="how-h">Booking a clean in {where}</h2>
+        <p>From plans to sign-off — the same five steps we use across Greater Brisbane.</p>
       </div>
       <Steps />
     </div>
   </section>
 
-  <section class="section section--mist" aria-labelledby="cmp-h">
+  <section class="section area-compare" aria-labelledby="cmp-h">
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow">Compare</p>
         <h2 id="cmp-h">Our crew vs a cheap clean</h2>
+        <p>Compare what you get, not just the number — especially before handover in {where}.</p>
       </div>
       <Comparison />
     </div>
   </section>
 
-  <section class="section" aria-labelledby="svc-h">
+  <section class="section section--mist area-services" aria-labelledby="svc-h">
     <div class="wrap">
       <div class="section-head">
-        <h2 id="svc-h">Services in {where}</h2>
+        <p class="eyebrow">Services</p>
+        <h2 id="svc-h">Services we book most in {where}</h2>
         <p>
-          The services we book most often in {where}. Every page explains the scope and the process, and our
-          <a href="/builders-clean-cost-brisbane/">price guide</a> covers what each one costs. Back to <a href="/">builders clean Brisbane</a>.
+          Every page explains the scope and the process. The <a href="/builders-clean-cost-brisbane/">price guide</a> covers what each one costs.
         </p>
       </div>
-      <div class="grid grid--3">
+      <div class="area-services__grid">
         {services.map((s) => (
-          <a class="card card--link" href={serviceUrl(s.slug)}>
-            <h3 style="font-size:22px">{s.name}</h3>
-            <p class="small">{s.summary}</p>
-            <span class="card__more" aria-hidden="true">Details</span>
+          <a class="svc-card" href={serviceUrl(s.slug)}>
+            <h3 class="svc-card__title">{s.name}</h3>
+            <p class="svc-card__summary">{s.summary}</p>
+            <span class="svc-card__more" aria-hidden="true">View service</span>
           </a>
         ))}
       </div>
+
       {a.kind === 'region' && (
-        <>
-          <h3 class="mt-3">All builders cleaning services in {where}</h3>
-          <ul class="chips mt-1">{SERVICES.map((s) => <li><a href={serviceUrl(s.slug)}>{s.name}</a></li>)}</ul>
-        </>
+        <div class="area-services__all">
+          <h3>All builders cleaning services</h3>
+          <ul class="area-services__chips">
+            {SERVICES.map((s) => (
+              <li><a href={serviceUrl(s.slug)}>{s.name}</a></li>
+            ))}
+          </ul>
+        </div>
       )}
+
       {a.kind === 'suburb' && (
-        <>
-          <h3 class="mt-3">Nearby areas</h3>
-          <ul class="chips mt-1">
-            {nearby.map((n) => <li><a href={areaUrl(n.slug)}>Builders clean {n.name}</a></li>)}
+        <div class="area-services__all">
+          <h3>Nearby areas</h3>
+          <ul class="area-services__chips">
+            {nearby.map((n) => (
+              <li><a href={areaUrl(n.slug)}>Builders clean {n.name}</a></li>
+            ))}
             <li><a href={areaUrl(region.slug)}>All of {region.name}</a></li>
             <li><a href="/areas/">All service areas</a></li>
           </ul>
-        </>
+        </div>
       )}
     </div>
   </section>
 
   <Testimonials filter={a.slug} />
 
-  <section class="section section--soft" aria-labelledby="faq-h">
-    <div class="wrap wrap--narrow">
-      <div class="section-head">
+  <section class="section faq-section" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head faq-section__head">
         <p class="eyebrow">FAQ</p>
         <h2 id="faq-h">Builders clean {a.name}: questions</h2>
+        <p>Local answers plus travel, quotes, weekends and what happens if something is missed.</p>
       </div>
-      <Faq faqs={faqs} />
-      <p class="lead mt-3">
-        Need a builders clean in {where}? Send the suburb, the job and your date, and we will reply with an itemised quote.
-      </p>
+      <Faq faqs={faqs} columns={2} />
+      <div class="faq-section__foot">
+        <p>Need a builders clean in {where}? Send the suburb, the job and your date for an itemised quote.</p>
+        <p class="faq-section__cta">
+          <a class="btn btn--primary" href="/contact/#quote">Get a free quote</a>
+          <a class="btn btn--ghost" href="/areas/">All service areas</a>
+        </p>
+      </div>
     </div>
   </section>
 

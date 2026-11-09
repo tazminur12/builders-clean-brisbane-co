@@ -5,15 +5,31 @@ import type { Faq as FaqT } from '../data/services';
 import { rich } from '../lib/text';
 import { faqPage } from '../lib/schema';
 
-interface Props { faqs: FaqT[]; schema?: boolean; price?: string; openFirst?: boolean }
-const { faqs, schema = true, price, openFirst = false } = Astro.props;
+interface Props {
+  faqs: FaqT[];
+  schema?: boolean;
+  price?: string;
+  openFirst?: boolean;
+  /** Two-column layout on desktop — halves vertical height on wide screens. */
+  columns?: 1 | 2;
+}
+const { faqs, schema = true, price, openFirst = false, columns = 1 } = Astro.props;
+const mid = Math.ceil(faqs.length / 2);
+const cols: FaqT[][] = columns === 2 ? [faqs.slice(0, mid), faqs.slice(mid)] : [faqs];
 ---
-<div class="faq">
-  {faqs.map((f, i) => (
-    <details open={openFirst && i === 0}>
-      <summary><h3 set:html={rich(f.q, { price })} /></summary>
-      <div class="faq__a"><p set:html={rich(f.a, { price })} /></div>
-    </details>
+<div class:list={['faq', { 'faq--2': columns === 2 }]}>
+  {cols.map((col, colIndex) => (
+    <div class="faq__col">
+      {col.map((f, i) => {
+        const globalIndex = colIndex === 0 ? i : mid + i;
+        return (
+          <details open={openFirst && globalIndex === 0 ? true : undefined}>
+            <summary><h3 set:html={rich(f.q, { price })} /></summary>
+            <div class="faq__a"><p set:html={rich(f.a, { price })} /></div>
+          </details>
+        );
+      })}
+    </div>
   ))}
 </div>
 {schema && <JsonLd data={faqPage(faqs, { price })} />}

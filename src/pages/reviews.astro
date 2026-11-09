@@ -3,82 +3,185 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
 import Photo from '../components/Photo.astro';
 import Icon from '../components/Icon.astro';
+import TrustStrip from '../components/TrustStrip.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { REVIEWS } from '../data/reviews';
 import { SITE, hasReviewUrl, isSet } from '../config/site';
+import { PHOTOS } from '../data/photos';
 import type { PhotoKey } from '../data/photos';
 import { breadcrumbList } from '../lib/schema';
+import { recleanTime } from '../lib/text';
 
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Reviews', href: '/reviews/' }];
 const gallery: PhotoKey[] = ['polished-concrete', 'bathroom-handover', 'kitchen', 'stairs', 'new-home', 'pool'];
+const reviewHref = hasReviewUrl ? SITE.reviewUrl : '/contact/';
+const reviewCta = hasReviewUrl ? 'Leave us a Google review' : 'Leave us a Google review';
 ---
 <BaseLayout
   title="Builders Clean Reviews Brisbane | Builders Clean Brisbane Co."
   description="Reviews of Builders Clean Brisbane Co. from Brisbane builders and homeowners. Read real Google reviews, see our work and leave a review after your clean."
   schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS['polished-concrete'].src}
 >
-  <PageHead crumbs={crumbs} h1="Builders Clean Reviews in Brisbane" eyebrow="Reviews">
+  <PageHead
+    crumbs={crumbs}
+    h1="Builders Clean Reviews in Brisbane"
+    eyebrow="Reviews"
+    photo="polished-concrete"
+    photoAlt="Polished concrete floor after a builders clean in Brisbane"
+    meta={[
+      'Real Google reviews only',
+      'Reply within 48 hours',
+      'Judged on the work too',
+    ]}
+  >
     <div class="answer">
       <p>
-        Looking for the best builders clean in Brisbane? Read what our customers say, and look at the work. Builders Clean Brisbane Co. is a
-        Brisbane builders cleaning company that cleans for builders and homeowners across Brisbane, and we only ever show real reviews from
-        real jobs. We reply to every review within 48 hours.
+        Real reviews from real Brisbane jobs — builders and homeowners only. We never invent testimonials.
       </p>
     </div>
     <div class="btn-row mt-2">
-      {hasReviewUrl
-        ? <a class="btn btn--lime" href={SITE.reviewUrl} rel="noopener"><Icon name="star" />Leave us a Google review</a>
-        : <a class="btn btn--lime" href="/contact/"><Icon name="star" />Leave us a Google review</a>}
-      {isSet(SITE.gbpUrl) && <a class="btn btn--ghost-light" href={SITE.gbpUrl} rel="noopener">Read our Google reviews</a>}
+      <a class="btn btn--lime" href={reviewHref} rel={hasReviewUrl ? 'noopener' : undefined}>
+        <Icon name="star" />{reviewCta}
+      </a>
+      {isSet(SITE.gbpUrl)
+        ? <a class="btn btn--ghost-light" href={SITE.gbpUrl} rel="noopener">Read on Google</a>
+        : <a class="btn btn--ghost-light" href="/our-work/">See our work</a>}
     </div>
-    {!hasReviewUrl && <p class="small mt-1" style="color:var(--c-on-teal-sub)">[GOOGLE REVIEW LINK — TBC]</p>}
+    {!hasReviewUrl && <p class="page-head__tbc">[GOOGLE REVIEW LINK — TBC]</p>}
   </PageHead>
+  <TrustStrip />
 
   {REVIEWS.length > 0 ? (
-    <section class="section" aria-labelledby="list-h">
+    <section class="section reviews-list" aria-labelledby="list-h">
       <div class="wrap">
-        <h2 id="list-h">What customers say</h2>
-        <div class="grid grid--3">
+        <div class="section-head reviews-list__head">
+          <p class="eyebrow">Customer feedback</p>
+          <h2 id="list-h">What customers say</h2>
+          <p>Verbatim Google reviews from builders and homeowners across Greater Brisbane.</p>
+        </div>
+        <div class="reviews-grid">
           {REVIEWS.map((r) => (
-            <figure class="card">
-              <p><span role="img" aria-label={`${r.rating} out of 5 stars`}>{'★'.repeat(r.rating)}</span></p>
-              <blockquote style="margin:0"><p>{r.text}</p></blockquote>
-              <figcaption class="small muted">{r.author}{r.jobType ? ` · ${r.jobType}` : ''}{r.suburb ? `, ${r.suburb}` : ''} · {r.date}</figcaption>
+            <figure class="review-card">
+              <p class="review-card__stars">
+                <span role="img" aria-label={`${r.rating} out of 5 stars`}>{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+              </p>
+              <blockquote class="review-card__quote"><p>{r.text}</p></blockquote>
+              <figcaption class="review-card__meta">
+                <span class="review-card__author">{r.author}</span>
+                <span class="review-card__detail">
+                  {[r.jobType, r.suburb].filter(Boolean).join(' · ')}
+                  {(r.jobType || r.suburb) && ' · '}
+                  {r.date}
+                </span>
+              </figcaption>
             </figure>
           ))}
         </div>
       </div>
     </section>
   ) : (
-    <section class="section" aria-labelledby="new-h">
-      <div class="wrap wrap--narrow">
-        <h2 id="new-h">Had a clean with us? Tell Brisbane about it.</h2>
-        <p>
-          We are a new Brisbane business, so every review counts. When you write one, it helps to mention the type of clean (final clean,
-          handover clean, renovation clean) and the suburb. Other builders and homeowners search for exactly that.
-        </p>
-        <p>Until our reviews build up, the best way to judge us is the work itself. These are real Brisbane jobs.</p>
+    <section class="section reviews-empty" aria-labelledby="new-h">
+      <div class="wrap">
+        <div class="section-head reviews-empty__head">
+          <p class="eyebrow">Be the first</p>
+          <h2 id="new-h">Had a clean with us? Tell Brisbane about it.</h2>
+          <p>
+            We are a new Brisbane business, so every review counts. Mention the type of clean and the suburb — other builders and homeowners
+            search for exactly that.
+          </p>
+        </div>
+        <div class="reviews-empty__grid">
+          <article class="reviews-empty__card">
+            <p class="reviews-empty__n" aria-hidden="true">01</p>
+            <h3>Leave a Google review</h3>
+            <p>A short note about the job type and suburb helps the next person decide. We reply to every review within 48 hours.</p>
+            <p class="reviews-empty__cta">
+              <a class="btn btn--primary" href={reviewHref} rel={hasReviewUrl ? 'noopener' : undefined}>
+                <Icon name="star" />Leave a review
+              </a>
+            </p>
+          </article>
+          <article class="reviews-empty__card">
+            <p class="reviews-empty__n" aria-hidden="true">02</p>
+            <h3>Judge us on the work</h3>
+            <p>
+              Until reviews build up, the photos are the best proof. Real Brisbane jobs — polished concrete, black tile, timber stairs and big
+              glass.
+            </p>
+            <p class="reviews-empty__cta">
+              <a class="btn btn--ghost" href="/our-work/">See all photos</a>
+            </p>
+          </article>
+        </div>
       </div>
     </section>
   )}
 
-  <section class="section section--mist" aria-labelledby="gal-h">
+  <section class="section section--mist work-section" aria-labelledby="gal-h">
     <div class="wrap">
-      <h2 id="gal-h">Our work</h2>
-      <div class="photo-grid photo-grid--3">{gallery.map((k) => <Photo photo={k} sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw" />)}</div>
-      <p class="mt-2"><a href="/our-work/">See all builders clean photos</a></p>
-    </div>
-  </section>
-
-  <section class="section" aria-labelledby="how-h">
-    <div class="wrap wrap--narrow">
-      <h2 id="how-h">How we handle reviews</h2>
-      <p>
-        We reply to every Google review within 48 hours, good or bad, and we name the job so readers know what it relates to. If something was
-        not right, we would rather hear it directly: tell us within the re-clean window and we come back to fix in-scope items. Read how we work on
-        our <a href="/about/">about page</a> or compare us on the <a href="/builders-clean-cost-brisbane/">price guide</a>.
+      <div class="section-head work-section__head">
+        <p class="eyebrow">Our work</p>
+        <h2 id="gal-h">Real Brisbane jobs, cleaned by our crew</h2>
+        <p>The finishes that show every speck of dust. No stock photos.</p>
+      </div>
+      <div class="work-gallery">
+        {gallery.map((k) => (
+          <div class="work-gallery__item">
+            <Photo
+              photo={k}
+              crop={[4, 3]}
+              class="work-gallery__photo"
+              sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw"
+              widths={[360, 540, 720, 860]}
+            />
+          </div>
+        ))}
+      </div>
+      <p class="work-section__cta">
+        <a class="btn btn--ghost" href="/our-work/">See all builders clean photos</a>
+        <a class="btn btn--primary" href="/contact/#quote">Get a free quote</a>
       </p>
     </div>
   </section>
+
+  <section class="section reviews-policy" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="section-head reviews-policy__head">
+        <p class="eyebrow">How we handle reviews</p>
+        <h2 id="how-h">Honest feedback, answered fast</h2>
+        <p>Good or bad, we reply — and we would rather fix a miss than argue about it.</p>
+      </div>
+      <div class="reviews-policy__grid">
+        <article class="reviews-policy__card">
+          <p class="reviews-policy__n" aria-hidden="true">01</p>
+          <h3>We reply within 48 hours</h3>
+          <p>
+            Every Google review gets a reply, and we name the job so readers know what it relates to. Praise or problems — same standard.
+          </p>
+        </article>
+        <article class="reviews-policy__card">
+          <p class="reviews-policy__n" aria-hidden="true">02</p>
+          <h3>Missed something? We come back</h3>
+          <p>
+            Tell us within {recleanTime()} and we return to re-clean any in-scope item. Direct feedback beats a surprise on Google.
+          </p>
+        </article>
+        <article class="reviews-policy__card">
+          <p class="reviews-policy__n" aria-hidden="true">03</p>
+          <h3>Only real reviews</h3>
+          <p>
+            We never invent or paraphrase testimonials. Until real reviews land, this page shows the work and how we respond — nothing fake.
+          </p>
+        </article>
+      </div>
+      <p class="reviews-policy__links">
+        <a href="/about/">About us</a>
+        <a href="/builders-clean-cost-brisbane/">Price guide</a>
+        <a href="/faq/">FAQ</a>
+      </p>
+    </div>
+  </section>
+
   <CtaBand />
 </BaseLayout>

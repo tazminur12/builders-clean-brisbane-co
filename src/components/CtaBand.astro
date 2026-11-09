@@ -1,31 +1,59 @@
 ---
 /** Final CTA band + quote form (template step 14). Provides the #quote anchor. */
 import QuoteForm from './QuoteForm.astro';
-import CtaButtons from './CtaButtons.astro';
+import Icon from './Icon.astro';
+import { SITE, hasPhone, hasWhatsapp, telHref, whatsappHref } from '../config/site';
 import { quoteTime, recleanTime } from '../lib/text';
 
 interface Props { heading?: string; text?: string; job?: string; suburb?: string; who?: 'builder' | 'homeowner' }
 const {
   heading = 'Send us your plans. Get your itemised quote.',
-  text = 'Tell us the suburb, the job and your date. Upload plans or photos if you have them.',
+  text = 'Tell us the suburb, the job and your date. Upload plans or photos if you have them — we reply with a room-by-room quote.',
   job, suburb, who,
 } = Astro.props;
+
+const trust = [
+  `Itemised quote within ${quoteTime()}`,
+  'Booked around handover, settlement or move-in',
+  'Supervisor check and photo report',
+  `Missed in-scope items re-cleaned within ${recleanTime()}`,
+];
 ---
 <section class="cta-band section on-teal" id="quote" aria-labelledby="quote-h">
   <div class="wrap cta-band__grid">
     <div class="cta-band__copy">
       <p class="eyebrow">Free quote</p>
       <h2 id="quote-h">{heading}</h2>
-      <p>{text}</p>
+      <p class="cta-band__lead">{text}</p>
+
       <ul class="cta-band__list">
-        <li>Itemised quote within {quoteTime()}</li>
-        <li>Booked around your handover, settlement or move-in date</li>
-        <li>Supervisor check and photo report on every clean</li>
-        <li>Missed in-scope items re-cleaned if reported within {recleanTime()}</li>
+        {trust.map((item) => <li>{item}</li>)}
       </ul>
-      <CtaButtons on="teal" showWhatsapp quoteHref="/contact/" quoteLabel="Quote page" class="no-print" />
+
+      {(hasPhone || hasWhatsapp) && (
+        <div class="cta-band__alt">
+          <p class="cta-band__alt-label">Prefer to talk first?</p>
+          <div class="btn-row">
+            {hasPhone && (
+              <a class="btn btn--ghost-light" href={telHref}>
+                <Icon name="phone" />Call {SITE.phoneDisplay}
+              </a>
+            )}
+            {hasWhatsapp && (
+              <a class="btn btn--ghost-light" href={whatsappHref} rel="noopener">
+                <Icon name="whatsapp" />WhatsApp
+              </a>
+            )}
+          </div>
+        </div>
+      )}
     </div>
-    <div class="form-card">
+
+    <div class="form-card form-card--quote">
+      <div class="form-card__head">
+        <h3 class="form-card__title">Request your quote</h3>
+        <p class="form-card__sub">Three quick steps. Required fields are marked.</p>
+      </div>
       <QuoteForm job={job} suburb={suburb} who={who} />
     </div>
   </div>

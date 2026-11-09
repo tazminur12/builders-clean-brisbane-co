@@ -15,6 +15,7 @@ import { breadcrumbList } from '../lib/schema';
 import { quoteTime, insuranceText, recleanTime, rich } from '../lib/text';
 
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'For builders', href: '/for-builders/' }];
+
 const docs = [
   ['Public liability insurance', `Certificate of currency, ${insuranceText()}.`],
   ['White cards', 'General construction induction cards for every crew member on site.{{?credentials}}'],
@@ -23,6 +24,7 @@ const docs = [
   ['Capability statement', isSet(SITE.capabilityPdf) ? `[Download the capability statement](${SITE.capabilityPdf})` : 'Capability statement PDF [TO BE CREATED BY OWNER].'],
   ['Site inductions', 'We complete your site induction before the first shift.'],
 ];
+
 const work = [
   ['Rough cleans', 'builders-rough-clean-brisbane', 'Between trades, booked into the program like any other trade.'],
   ['Final cleans', 'builders-final-clean-brisbane', 'After the last trade, to handover standard, with a supervisor walk.'],
@@ -33,6 +35,12 @@ const work = [
   ['Commercial fit-outs', 'commercial-fit-out-cleaning-brisbane', 'After hours and overnight so the tenant trades on time.'],
   ['Site clean-up', 'construction-site-clean-up-brisbane', 'Regular or one-off clean-ups to keep live sites safe.'],
 ];
+
+const pains = [
+  'The cleaner didn’t turn up and handover is tomorrow.',
+  'Previous cleaners took three days; we needed it done in one.',
+  'Residue the client finds after handover becomes my problem.',
+];
 ---
 <BaseLayout
   title="Construction Cleaning Contractor | Builders Clean Brisbane Co."
@@ -40,105 +48,167 @@ const work = [
   schema={[breadcrumbList(crumbs)]}
   ogImage={PHOTOS['bathroom-handover'].src}
 >
-  <PageHead crumbs={crumbs} h1="Construction Cleaning Contractor in Brisbane" eyebrow="For builders and developers" photo="bathroom-handover" photoAlt="Bathroom ready for client handover after a construction clean in Brisbane">
+  <PageHead
+    crumbs={crumbs}
+    h1="Construction Cleaning Contractor in Brisbane"
+    eyebrow="For builders and developers"
+    photo="bathroom-handover"
+    photoAlt="Bathroom ready for client handover after a construction clean in Brisbane"
+    meta={[
+      'Booked into your program',
+      'Documents before day one',
+      `Quotes within ${quoteTime()}`,
+    ]}
+  >
     <div class="answer">
       <p>
-        Builders Clean Brisbane Co. is a Brisbane construction cleaning contractor that does rough, final and handover cleans for residential
-        builders, developers, project managers and shopfitters across Brisbane, Moreton Bay, Logan and Ipswich. We book into your program,
-        move when trades run late, send documents before day one, and finish every clean with a supervisor sign-off and a photo report your
-        client can see. Itemised quotes arrive within {quoteTime()}, and account pricing is available for regular work.
+        Rough, final and handover cleans for builders, developers and shopfitters — supervisor sign-off and a photo report your client can see.
       </p>
     </div>
-    <CtaButtons on="teal" showWhatsapp quoteLabel="Request a builder quote" class="mt-2" />
+    <CtaButtons on="teal" showWhatsapp heroFallback quoteLabel="Request a builder quote" class="mt-2" />
   </PageHead>
   <TrustStrip />
 
-  <section class="section section--mist" aria-labelledby="pains-h">
+  <section class="section section--mist builders-pains" aria-labelledby="pains-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head builders-pains__head">
         <p class="eyebrow">What builders tell us</p>
         <h2 id="pains-h">A builders cleaning subcontractor you don’t have to chase</h2>
+        <p>
+          Reliability is what you pay a cleaning contractor for. One contact, a crew sized to the job, a checklist and supervisor walk, and a
+          photo report before you ask. In-scope misses within {recleanTime()} — we come back.
+        </p>
       </div>
       <ul class="pains">
-        <li>The cleaner didn’t turn up and handover is tomorrow.</li>
-        <li>Previous cleaners took three days; we needed it done in one.</li>
-        <li>Residue the client finds after handover becomes my problem.</li>
+        {pains.map((t) => <li>{t}</li>)}
       </ul>
-      <p class="lead" style="max-width:72ch">
-        Reliability is what you pay a cleaning contractor for. One contact who answers the phone, a crew sized to the job, a checklist and a
-        supervisor walk, and a photo report filed before you ask. If the client finds an in-scope item within {recleanTime()}, we come back.
-      </p>
     </div>
   </section>
 
-  <section class="section" aria-labelledby="what-h">
+  <section class="section builders-work" aria-labelledby="what-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head builders-work__head">
         <p class="eyebrow">What we do for builders</p>
         <h2 id="what-h">Construction cleaning across the program</h2>
+        <p>Eight services builders book most. Open any for scope, inclusions and how we price it.</p>
       </div>
-      <div class="grid grid--4">
-        {work.map(([h, slug, p]) => (
-          <a class="card card--link" href={`/services/${slug}/`}><h3 style="font-size:22px">{h}</h3><p class="small">{p}</p><span class="card__more" aria-hidden="true">Details</span></a>
+      <div class="builders-work__grid">
+        {work.map(([h, slug, text]) => (
+          <a class="svc-card" href={`/services/${slug}/`}>
+            <h3 class="svc-card__title">{h}</h3>
+            <p class="svc-card__summary">{text}</p>
+            <span class="svc-card__more" aria-hidden="true">View service</span>
+          </a>
         ))}
       </div>
-      <h2 class="mt-3">How we plan the program</h2>
-      <p style="max-width:72ch">
-        Send the construction program or the key dates. We book each clean against the trade before it, confirm in writing, and send a reminder
-        the day before. When the plasterer runs over or the handover date moves, tell one contact and we re-book. Staged projects get a clean
-        plan per stage, and multi-dwelling jobs get a date per dwelling.
-      </p>
+    </div>
+  </section>
+
+  <section class="section section--soft stages-section" aria-labelledby="plan-h">
+    <div class="wrap">
+      <div class="section-head stages-section__head">
+        <p class="eyebrow">How we plan</p>
+        <h2 id="plan-h">Booked into your program, stage by stage</h2>
+        <p>
+          Send the construction program or key dates. We book each clean against the trade before it, confirm in writing, and remind you the day
+          before. When trades run late, tell one contact — we re-book. Staged projects get a plan per stage; multi-dwelling jobs get a date per
+          dwelling.
+        </p>
+      </div>
       <StageDiagram />
     </div>
   </section>
 
-  <section class="section section--soft" aria-labelledby="docs-h">
+  <section class="section builders-docs" aria-labelledby="docs-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head builders-docs__head">
         <p class="eyebrow">Compliance</p>
-        <h2 id="docs-h">Builders cleaner, white card and insured: documents before day one</h2>
+        <h2 id="docs-h">Documents before day one</h2>
         <p>No paperwork, no site access. We send what your site needs before the first shift. Only documents we hold are listed here.</p>
       </div>
-      <div class="grid grid--3">
-        {docs.map(([h, p]) => <div class="card"><h3 style="font-size:22px"><Icon name="shield" class="" /> {h}</h3><p set:html={rich(p)} /></div>)}
+      <div class="builders-docs__grid">
+        {docs.map(([h, text]) => (
+          <article class="builders-doc">
+            <span class="builders-doc__icon" aria-hidden="true"><Icon name="shield" /></span>
+            <h3>{h}</h3>
+            <p set:html={rich(text)} />
+          </article>
+        ))}
       </div>
     </div>
   </section>
 
-  <section class="section section--teal on-teal" aria-labelledby="how-h">
+  <section class="section section--teal on-teal how-section" aria-labelledby="how-h">
     <div class="wrap">
-      <div class="section-head"><p class="eyebrow">Sign-off</p><h2 id="how-h">Supervisor sign-off and photo reports</h2>
-        <p>Every clean ends the same way: a supervisor walks the job against the checklist, fixes anything missed on the spot, and sends a before-and-after photo report you can forward to your client.</p></div>
+      <div class="section-head how-section__head">
+        <p class="eyebrow">Sign-off</p>
+        <h2 id="how-h">Supervisor sign-off and photo reports</h2>
+        <p>
+          Every clean ends the same way: a supervisor walks the job against the checklist, fixes anything missed on the spot, and sends a
+          before-and-after photo report you can forward to your client.
+        </p>
+      </div>
       <Steps />
     </div>
   </section>
 
-  <section class="section" aria-labelledby="acc-h">
-    <div class="wrap split">
-      <div>
-        <h2 id="acc-h">Account pricing for builders</h2>
-        <p>
-          Builders with regular work get program pricing based on volume and the stages they need. Estate builders can send a lot list;
-          developers can send a unit schedule. We quote per home, per dwelling or per unit, so the numbers are easy to allocate to each job.
-        </p>
-        <p>See how we price on the <a href="/builders-clean-cost-brisbane/">builders clean cost guide</a>, or go back to <a href="/">builders clean Brisbane</a>.</p>
+  <section class="section section--mist builders-account" aria-labelledby="acc-h">
+    <div class="wrap">
+      <div class="section-head builders-account__head">
+        <p class="eyebrow">Pricing & commercial</p>
+        <h2 id="acc-h">Account rates and site-ready crews</h2>
+        <p>Regular programs get clearer numbers. Commercial sites get after-hours crews and SWMS on request.</p>
       </div>
-      <div>
-        <h2>SWMS cleaning contractor for commercial sites</h2>
-        <p>
-          For shopfitters and commercial builders we work after hours, follow site rules and provide SWMS on request. See
-          <a href="/services/commercial-fit-out-cleaning-brisbane/">commercial fit-out cleaning</a> and
-          <a href="/services/construction-site-clean-up-brisbane/">construction site clean-up</a>.
+      <div class="builders-account__grid">
+        <article class="builders-account__card">
+          <p class="builders-account__n" aria-hidden="true">01</p>
+          <h3>Account pricing for builders</h3>
+          <p>
+            Builders with regular work get program pricing based on volume and stages. Estate builders can send a lot list; developers a unit
+            schedule. We quote per home, dwelling or unit so numbers allocate cleanly.
+          </p>
+          <p class="builders-account__links">
+            <a href="/builders-clean-cost-brisbane/">Builders clean cost guide</a>
+            <a href="/contact/#quote">Request account pricing</a>
+          </p>
+        </article>
+        <article class="builders-account__card">
+          <p class="builders-account__n" aria-hidden="true">02</p>
+          <h3>SWMS for commercial sites</h3>
+          <p>
+            For shopfitters and commercial builders we work after hours, follow site rules and provide SWMS on request — so the tenant can trade
+            on time.
+          </p>
+          <p class="builders-account__links">
+            <a href="/services/commercial-fit-out-cleaning-brisbane/">Commercial fit-out cleaning</a>
+            <a href="/services/construction-site-clean-up-brisbane/">Construction site clean-up</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section faq-section" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head faq-section__head">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-h">Questions from builders</h2>
+        <p>Subcontracts, insurance, white cards, programs, photo reports and account pricing.</p>
+      </div>
+      <Faq faqs={BUILDER_FAQS} columns={2} />
+      <div class="faq-section__foot">
+        <p>Ready to put us on the program? Send dates and plans for a builder quote.</p>
+        <p class="faq-section__cta">
+          <a class="btn btn--primary" href="/contact/#quote">Request a builder quote</a>
+          <a class="btn btn--ghost" href="/services/">All services</a>
         </p>
       </div>
     </div>
   </section>
 
-  <section class="section section--soft" aria-labelledby="faq-h">
-    <div class="wrap wrap--narrow">
-      <h2 id="faq-h">Questions from builders</h2>
-      <Faq faqs={BUILDER_FAQS} />
-    </div>
-  </section>
-  <CtaBand heading="Send the program. Get a builder quote." text="Include your business name, ABN, the site contact, the plans and the handover date." who="builder" />
+  <CtaBand
+    heading="Send the program. Get a builder quote."
+    text="Include your business name, ABN, the site contact, the plans and the handover date."
+    who="builder"
+  />
 </BaseLayout>

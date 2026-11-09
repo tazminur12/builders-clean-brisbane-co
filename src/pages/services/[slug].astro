@@ -13,9 +13,9 @@ import AreaColumns from '../../components/AreaColumns.astro';
 import Testimonials from '../../components/Testimonials.astro';
 import Faq from '../../components/Faq.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { SERVICES, serviceBySlug, serviceUrl, type Service } from '../../data/services';
+import { SERVICES, SERVICE_GROUPS, serviceBySlug, serviceUrl, type Service } from '../../data/services';
 import { PHOTOS, type PhotoKey } from '../../data/photos';
-import { rich, plain } from '../../lib/text';
+import { rich, plain, quoteTime, priceText } from '../../lib/text';
 import { serviceSchema, allAreasServed, breadcrumbList } from '../../lib/schema';
 
 export const getStaticPaths = (() => SERVICES.map((s) => ({ params: { slug: s.slug } }))) satisfies GetStaticPaths;
@@ -28,7 +28,6 @@ const crumbs = [
   { label: s.name, href: serviceUrl(s.slug) },
 ];
 
-// Hero = first photo. Gallery = remaining photos, topped up with the closest real photo (never stock).
 const hero = s.photos[0];
 const used = new Set<PhotoKey>([hero.key]);
 const gallery = s.photos.slice(1);
@@ -39,6 +38,8 @@ if (gallery.length === 0) {
   gallery.push({ key: k, alt: PHOTOS[k].alt });
 }
 const related = s.related.map(serviceBySlug);
+const groupLabel = SERVICE_GROUPS[s.group].label;
+const priceFrom = priceText(s.priceFrom);
 
 const schema = [
   breadcrumbList(crumbs),
@@ -46,31 +47,53 @@ const schema = [
 ];
 ---
 <BaseLayout title={s.title} description={plain(s.meta)} schema={schema} ogImage={PHOTOS[hero.key].src}>
-  <!-- 1–4: breadcrumbs, H1, answer-first intro, primary CTA -->
-  <PageHead crumbs={crumbs} h1={s.h1} eyebrow="Builders cleaning service" photo={hero.key} photoAlt={hero.alt}>
-    <div class="answer"><p set:html={rich(s.intro, ctx)} /></div>
-    <CtaButtons on="teal" showWhatsapp class="mt-2" />
-    <p class="cta-card__upload" style="color:var(--c-on-teal-sub)"><Icon name="upload" /><span><a href="/contact/#quote" style="color:var(--c-lime)">Upload plans or photos</a> for a faster quote.</span></p>
+  <PageHead
+    crumbs={crumbs}
+    h1={s.h1}
+    eyebrow={groupLabel}
+    photo={hero.key}
+    photoAlt={hero.alt}
+    meta={[
+      `From ${priceFrom}`,
+      `Quote within ${quoteTime()}`,
+      'Supervisor check + photo report',
+    ]}
+  >
+    <div class="answer">
+      <p>{s.summary}</p>
+    </div>
+    <CtaButtons on="teal" showWhatsapp heroFallback class="mt-2" />
+    <p class="page-head__upload">
+      <Icon name="upload" />
+      <span><a href="/contact/#quote">Upload plans or photos</a> for a faster quote.</span>
+    </p>
   </PageHead>
   {hero.todo && <Fragment set:html={`<!-- TODO: real job photo of ${hero.todo} -->`} />}
 
-  <!-- 5: trust strip (renders only confirmed items) -->
   <TrustStrip />
 
-  <!-- 6: pain points -->
-  <section class="section section--mist" aria-labelledby="pains-h">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">Sound familiar?</p>
-        <h2 id="pains-h">What we hear before a {s.short}</h2>
+  <section class="section section--soft svc-detail-intro" aria-labelledby="intro-h">
+    <div class="wrap svc-detail-intro__inner">
+      <p class="eyebrow">About this service</p>
+      <h2 id="intro-h" class="sr-only">{s.name}</h2>
+      <div class="answer svc-detail-intro__copy">
+        <p set:html={rich(s.intro, ctx)} />
       </div>
-      <ul class="pains">{s.pains.map((p) => <li>{p}</li>)}</ul>
-      <p class="lead" style="max-width:70ch" set:html={rich(s.painsAnswer, ctx)} />
     </div>
   </section>
 
-  <!-- 7: what's included -->
-  <section class="section" aria-labelledby="inc-h">
+  <section class="section builders-pains" aria-labelledby="pains-h">
+    <div class="wrap">
+      <div class="section-head builders-pains__head">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="pains-h">What we hear before a {s.short}</h2>
+        <p set:html={rich(s.painsAnswer, ctx)} />
+      </div>
+      <ul class="pains">{s.pains.map((p) => <li>{p}</li>)}</ul>
+    </div>
+  </section>
+
+  <section class="section section--mist area-scope" aria-labelledby="inc-h">
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow">Scope</p>
@@ -95,11 +118,14 @@ const schema = [
   </section>
 
   {s.stage && (
-    <section class="section section--soft" aria-labelledby="stage-h">
+    <section class="section stages-section" aria-labelledby="stage-h">
       <div class="wrap">
-        <div class="section-head">
+        <div class="section-head stages-section__head">
           <p class="eyebrow">Build stages</p>
-          <h2 id="stage-h">{s.stage === 'all' ? 'Rough, final and handover: book one stage or all three' : 'Where this clean fits in the build'}</h2>
+          <h2 id="stage-h">
+            {s.stage === 'all' ? 'Rough, final and handover: book one stage or all three' : 'Where this clean fits in the build'}
+          </h2>
+          <p>Most builds need more than one clean. See how this service sits in the program.</p>
         </div>
         <StageDiagram current={s.stage} />
       </div>
@@ -107,51 +133,71 @@ const schema = [
   )}
 
   {s.sections.length > 0 && (
-    <section class="section" aria-label="More about this service">
-      <div class="wrap wrap--narrow stack">
+    <section class="section section--soft svc-detail-body" aria-label="More about this service">
+      <div class="wrap svc-detail-body__grid">
         {s.sections.map((sec) => (
-          <div class="mb-3">
+          <article class="svc-detail-body__card">
             <h2>{sec.h2}</h2>
             {sec.paras.map((p) => <p set:html={rich(p, ctx)} />)}
-          </div>
+          </article>
         ))}
       </div>
     </section>
   )}
 
-  <!-- 8: how it works -->
-  <section class="section section--teal on-teal" aria-labelledby="how-h">
+  <section class="section section--teal on-teal how-section" aria-labelledby="how-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head how-section__head">
         <p class="eyebrow">How it works</p>
         <h2 id="how-h">Booking a {s.short} in five steps</h2>
+        <p>From plans to sign-off — the same process on every job.</p>
       </div>
       <Steps />
     </div>
   </section>
 
-  <!-- 9: real photos -->
-  <section class="section" aria-labelledby="photos-h">
+  <section class="section work-section" aria-labelledby="photos-h">
     <div class="wrap">
-      <div class="section-head">
+      <div class="section-head work-section__head">
         <p class="eyebrow">Our work</p>
         <h2 id="photos-h">From our Brisbane jobs</h2>
+        <p>Real finishes, real sites — no stock photos.</p>
       </div>
-      <div class="photo-grid photo-grid--2">
+      <div class="work-gallery">
         {gallery.map((p) => (
-          <Fragment>
+          <div class="work-gallery__item">
             {p.todo && <Fragment set:html={`<!-- TODO: real job photo of ${p.todo} -->`} />}
-            <Photo photo={p.key} alt={p.alt} caption={p.caption} />
-          </Fragment>
+            <Photo
+              photo={p.key}
+              alt={p.alt}
+              caption={false}
+              crop={[4, 3]}
+              class="work-gallery__photo"
+              sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw"
+              widths={[360, 540, 720, 860]}
+            />
+          </div>
         ))}
-        <Photo photo={hero.key} alt={hero.alt} caption={hero.caption} />
+        <div class="work-gallery__item">
+          <Photo
+            photo={hero.key}
+            alt={hero.alt}
+            caption={false}
+            crop={[4, 3]}
+            class="work-gallery__photo"
+            sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw"
+            widths={[360, 540, 720, 860]}
+          />
+        </div>
       </div>
-      <p class="mt-2"><a href="/our-work/">See more builders clean photos from Brisbane jobs</a></p>
+      <p class="work-section__cta">
+        <a class="btn btn--ghost" href="/our-work/">See more Brisbane job photos</a>
+        <a class="btn btn--primary" href="/contact/#quote">Get a free quote</a>
+      </p>
     </div>
   </section>
 
-  <!-- 10: why us vs a cheap clean -->
-  <section class="section section--mist" aria-labelledby="cmp-h">
+  <section class="section section--mist area-compare" aria-labelledby="cmp-h">
     <div class="wrap">
       <div class="section-head">
         <p class="eyebrow">Compare</p>
@@ -162,47 +208,54 @@ const schema = [
     </div>
   </section>
 
-  <!-- 11: related services + areas -->
-  <section class="section" aria-labelledby="rel-h">
+  <section class="section svc-detail-related" aria-labelledby="rel-h">
     <div class="wrap">
       <div class="section-head">
+        <p class="eyebrow">Related</p>
         <h2 id="rel-h">Related builders cleaning services</h2>
         <p>
-          This service is part of our full <a href="/">builders clean Brisbane</a> service. See what each stage costs in the
-          <a href="/builders-clean-cost-brisbane/">builders clean price guide</a>, or check a clean against our <a href="/builders-clean-checklist/">builders clean checklist</a>.
+          Part of our full <a href="/">builders clean Brisbane</a> offering. See costs in the
+          <a href="/builders-clean-cost-brisbane/">price guide</a>, or check scope on the
+          <a href="/builders-clean-checklist/">builders clean checklist</a>.
         </p>
       </div>
-      <div class="grid grid--4">
+      <div class="svc-detail-related__grid">
         {related.map((r) => (
-          <a class="card card--link" href={serviceUrl(r.slug)}>
-            <h3 style="font-size:22px">{r.name}</h3>
-            <p class="small">{r.summary}</p>
-            <span class="card__more" aria-hidden="true">Details</span>
+          <a class="svc-card" href={serviceUrl(r.slug)}>
+            <h3 class="svc-card__title">{r.name}</h3>
+            <p class="svc-card__summary">{r.summary}</p>
+            <span class="svc-card__more" aria-hidden="true">View service</span>
           </a>
         ))}
       </div>
-      <hr class="rule mt-3 mb-3" />
-      <h2 id="areas-h">Areas we cover</h2>
-      <p class="muted">We do {s.short}s across Greater Brisbane. Choose your area:</p>
-      <AreaColumns />
+
+      <div class="svc-detail-areas">
+        <h2 id="areas-h">Areas we cover</h2>
+        <p>We do {s.short}s across Greater Brisbane. Choose your area:</p>
+        <AreaColumns />
+      </div>
     </div>
   </section>
 
-  <!-- 12: testimonials (only when real reviews exist) -->
   <Testimonials filter={s.slug} />
 
-  <!-- 13: FAQs -->
-  <section class="section section--soft" aria-labelledby="faq-h">
-    <div class="wrap wrap--narrow">
-      <div class="section-head">
+  <section class="section section--soft faq-section" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head faq-section__head">
         <p class="eyebrow">FAQ</p>
         <h2 id="faq-h">{s.name} questions</h2>
+        <p>Straight answers on scope, timing, access and price.</p>
       </div>
-      <Faq faqs={s.faqs} price={s.priceFrom} />
-      <p class="lead mt-3" set:html={rich(s.closing, ctx)} />
+      <Faq faqs={s.faqs} price={s.priceFrom} columns={2} />
+      <div class="faq-section__foot">
+        <p set:html={rich(s.closing, ctx)} />
+        <p class="faq-section__cta">
+          <a class="btn btn--primary" href="/contact/#quote">Get a free quote</a>
+          <a class="btn btn--ghost" href="/services/">All services</a>
+        </p>
+      </div>
     </div>
   </section>
 
-  <!-- 14: final CTA + form -->
   <CtaBand job={s.name} who={s.group === 'commercial' ? 'builder' : undefined} />
 </BaseLayout>

@@ -2,55 +2,124 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
 import QuoteForm from '../components/QuoteForm.astro';
-import MapFacade from '../components/MapFacade.astro';
+import TrustStrip from '../components/TrustStrip.astro';
 import Icon from '../components/Icon.astro';
 import { SITE, hasPhone, hasEmail, hasWhatsapp, hasHours, telHref, whatsappHref } from '../config/site';
-import { REGIONS, SUBURBS, areaUrl } from '../data/areas';
+import { REGIONS, areaUrl } from '../data/areas';
+import { PHOTOS } from '../data/photos';
 import { breadcrumbList } from '../lib/schema';
 import { quoteTime } from '../lib/text';
 
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Contact', href: '/contact/' }];
+const hasDirect = hasPhone || hasEmail || hasWhatsapp;
 ---
 <BaseLayout
   title="Get a Builders Clean Quote Brisbane | Builders Clean Brisbane Co."
   description="Get a builders clean quote in Brisbane. Send the suburb, job type, handover date and plans or photos, and receive an itemised quote fast. Request yours now."
   schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS['new-home'].src}
 >
-  <PageHead crumbs={crumbs} h1="Get a Builders Clean Quote in Brisbane" eyebrow="Contact">
+  <PageHead
+    crumbs={crumbs}
+    h1="Get a Builders Clean Quote in Brisbane"
+    eyebrow="Contact"
+    photo="new-home"
+    photoAlt="New home ready for handover after a builders clean in Brisbane"
+    meta={[
+      `Itemised quote within ${quoteTime()}`,
+      'Plans or photos welcome',
+      'We come to you',
+    ]}
+  >
     <div class="answer">
       <p>
-        Builders Clean Brisbane Co. is a Brisbane builders cleaning company that quotes builders cleans for builders and homeowners across
-        Brisbane, Moreton Bay, Logan, Ipswich and the Redlands. Fill in the form with the suburb, the job and your date, and we reply with an
-        itemised quote within {quoteTime()}. Plans help us quote faster: upload PDFs, floor plans or photos.
+        Send the suburb, the job and your date — we reply with an itemised quote within {quoteTime()}.
       </p>
     </div>
   </PageHead>
+  <TrustStrip />
 
-  <section class="section" id="quote" aria-labelledby="form-h">
-    <div class="wrap split">
-      <div class="form-card" style="box-shadow:none;border:1px solid var(--c-line)">
-        <h2 id="form-h">Request your quote</h2>
+  <section class="section section--soft contact-page" id="quote" aria-labelledby="form-h">
+    <div class="wrap contact-page__grid">
+      <div class="form-card form-card--quote contact-page__form">
+        <div class="form-card__head">
+          <h2 id="form-h" class="form-card__title">Request your quote</h2>
+          <p class="form-card__sub">Three quick steps. Required fields are marked.</p>
+        </div>
         <QuoteForm id="c" />
       </div>
-      <div class="stack">
-        <h2>Other ways to reach us</h2>
-        <address class="nap" style="font-size:17px">
-          <strong>{SITE.name}</strong>
-          <span>{SITE.addressLocality}, {SITE.addressRegion} (we come to you)</span>
-          {hasHours && <span><Icon name="clock" class="" /> {SITE.hours}</span>}
-          {hasPhone && <a href={telHref}>Call {SITE.phoneDisplay}</a>}
-          {hasEmail && <a href={`mailto:${SITE.email}`}>{SITE.email}</a>}
-          {hasWhatsapp && <a href={whatsappHref} rel="noopener">WhatsApp us</a>}
-        </address>
-        {!hasPhone && !hasEmail && <p class="muted">The quote form is the fastest way to reach us.</p>}
-        <MapFacade />
-        <h3>Service areas</h3>
-        <ul class="chips">
-          {REGIONS.map((r) => <li><a href={areaUrl(r.slug)}>{r.name}</a></li>)}
-          {SUBURBS.map((s) => <li><a href={areaUrl(s.slug)}>{s.name}</a></li>)}
-        </ul>
-        <p class="small">Not sure we cover your suburb? Put it in the form and we will confirm. Prefer to read first? See the <a href="/builders-clean-cost-brisbane/">price guide</a> or go back to <a href="/">builders clean Brisbane</a>.</p>
-      </div>
+
+      <aside class="contact-aside" aria-label="Other ways to reach us">
+        <article class="contact-aside__card">
+          <p class="eyebrow">Reach us</p>
+          <h2 class="contact-aside__title">Other ways to get in touch</h2>
+          <address class="contact-aside__nap">
+            <strong>{SITE.name}</strong>
+            <span>{SITE.addressLocality}, {SITE.addressRegion} — we come to you</span>
+            {hasHours && (
+              <span class="contact-aside__row">
+                <Icon name="clock" />{SITE.hours}
+              </span>
+            )}
+          </address>
+
+          {hasDirect ? (
+            <div class="contact-aside__channels">
+              {hasPhone && (
+                <a class="contact-aside__channel" href={telHref}>
+                  <span class="contact-aside__icon" aria-hidden="true"><Icon name="phone" /></span>
+                  <span>
+                    <span class="contact-aside__label">Call</span>
+                    <span class="contact-aside__value">{SITE.phoneDisplay}</span>
+                  </span>
+                </a>
+              )}
+              {hasEmail && (
+                <a class="contact-aside__channel" href={`mailto:${SITE.email}`}>
+                  <span class="contact-aside__icon" aria-hidden="true"><Icon name="mail" /></span>
+                  <span>
+                    <span class="contact-aside__label">Email</span>
+                    <span class="contact-aside__value">{SITE.email}</span>
+                  </span>
+                </a>
+              )}
+              {hasWhatsapp && (
+                <a class="contact-aside__channel" href={whatsappHref} rel="noopener">
+                  <span class="contact-aside__icon" aria-hidden="true"><Icon name="whatsapp" /></span>
+                  <span>
+                    <span class="contact-aside__label">WhatsApp</span>
+                    <span class="contact-aside__value">Message us</span>
+                  </span>
+                </a>
+              )}
+            </div>
+          ) : (
+            <p class="contact-aside__note">The quote form is the fastest way to reach us right now.</p>
+          )}
+        </article>
+
+        <article class="contact-aside__card">
+          <p class="eyebrow">Coverage</p>
+          <h2 class="contact-aside__title">Service areas</h2>
+          <p class="contact-aside__blurb">Not sure we cover your suburb? Put it in the form and we will confirm.</p>
+          <ul class="contact-aside__regions">
+            {REGIONS.map((r) => (
+              <li><a href={areaUrl(r.slug)}>{r.name}</a></li>
+            ))}
+          </ul>
+          <p class="contact-aside__more"><a href="/areas/">See all service areas</a></p>
+        </article>
+
+        <article class="contact-aside__card contact-aside__card--links">
+          <p class="eyebrow">Helpful links</p>
+          <ul class="contact-aside__links">
+            <li><a href="/builders-clean-cost-brisbane/">Price guide</a></li>
+            <li><a href="/services/">Services</a></li>
+            <li><a href="/for-builders/">For builders</a></li>
+            <li><a href="/">Builders clean Brisbane</a></li>
+          </ul>
+        </article>
+      </aside>
     </div>
   </section>
 </BaseLayout>
