@@ -3,6 +3,8 @@ import type { GetStaticPaths } from 'astro';
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHead from '../../components/PageHead.astro';
+import Photo from '../../components/Photo.astro';
+import CtaButtons from '../../components/CtaButtons.astro';
 import Faq from '../../components/Faq.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { serviceBySlug, serviceUrl } from '../../data/services';
@@ -24,13 +26,19 @@ const crumbs = [{ label: 'Home', href: '/' }, { label: 'Guides', href: '/blog/' 
 const services = d.services.map(serviceBySlug);
 const area = areaBySlug(d.area);
 const fmt = (dt: Date) => dt.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
+const published = d.pubDate.toISOString().slice(0, 10);
+const modified = (d.updated ?? d.pubDate).toISOString().slice(0, 10);
+
+const allPosts = (await getCollection('blog')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const moreGuides = allPosts.filter((p) => p.id !== post.id).slice(0, 3);
+
 const article = {
   '@context': 'https://schema.org',
   '@type': 'BlogPosting',
   headline: d.h1,
   description: d.description,
-  datePublished: d.pubDate.toISOString().slice(0, 10),
-  dateModified: (d.updated ?? d.pubDate).toISOString().slice(0, 10),
+  datePublished: published,
+  dateModified: modified,
   mainEntityOfPage: abs(url),
   inLanguage: 'en-AU',
   author: { '@id': BUSINESS_ID },
@@ -38,25 +46,126 @@ const article = {
   image: abs('/brand/og-image-1200x630.jpg'),
 };
 ---
-<BaseLayout title={d.title} description={d.description} schema={[breadcrumbList(crumbs), article]} ogImage={PHOTOS[d.photo].src} ogType="article">
-  <PageHead crumbs={crumbs} h1={d.h1} eyebrow="Guide" photo={d.photo} photoAlt={d.photoAlt}>
-    <p class="lead">{d.summary}</p>
-    <p class="small" style="color:var(--c-on-teal-sub)">By the Builders Clean Brisbane Co. team · <time datetime={d.pubDate.toISOString().slice(0, 10)}>{fmt(d.pubDate)}</time></p>
+<BaseLayout
+  title={d.title}
+  description={d.description}
+  schema={[breadcrumbList(crumbs), article]}
+  ogImage={PHOTOS[d.photo].src}
+  ogType="article"
+>
+  <PageHead
+    crumbs={crumbs}
+    h1={d.h1}
+    eyebrow="Guide"
+    photo={d.photo}
+    photoAlt={d.photoAlt}
+    meta={[
+      'Brisbane builders clean',
+      'Plain English',
+      fmt(d.pubDate),
+    ]}
+  >
+    <div class="answer">
+      <p>{d.summary}</p>
+    </div>
+    <p class="blog-post-head__byline">
+      By the Builders Clean Brisbane Co. team ·
+      <time datetime={published}>{fmt(d.pubDate)}</time>
+      {d.updated && (
+        <>
+          {' '}· Updated <time datetime={modified}>{fmt(d.updated)}</time>
+        </>
+      )}
+    </p>
+    <CtaButtons on="teal" showWhatsapp heroFallback class="mt-2" />
   </PageHead>
-  <article class="section">
-    <div class="wrap prose">
-      <Content />
-      <aside class="card mt-3" aria-label="Related">
-        <h2 style="font-size:26px;margin:0">Related services</h2>
-        <ul class="link-list">
-          {services.map((s) => <li><a href={serviceUrl(s.slug)}>{s.name} in Brisbane</a></li>)}
-          <li><a href={areaUrl(area.slug)}>Builders clean {area.name}</a></li>
-          <li><a href="/contact/">Get a builders clean quote</a></li>
-        </ul>
+
+  <article class="section blog-post-body">
+    <div class="wrap blog-post-body__layout">
+      <div class="blog-post-body__main prose prose--blog">
+        <Content />
+      </div>
+
+      <aside class="blog-post-aside" aria-label="Related">
+        <div class="blog-post-aside__card">
+          <p class="eyebrow">Related services</p>
+          <h2 class="blog-post-aside__title">Use these next</h2>
+          <ul class="blog-post-aside__links">
+            {services.map((s) => (
+              <li><a href={serviceUrl(s.slug)}>{s.name}</a></li>
+            ))}
+            <li><a href={areaUrl(area.slug)}>Builders clean {area.name}</a></li>
+            <li><a href="/builders-clean-cost-brisbane/">Price guide</a></li>
+            <li><a href="/contact/#quote">Get a free quote</a></li>
+          </ul>
+        </div>
+        <div class="blog-post-aside__card blog-post-aside__card--cta">
+          <p class="eyebrow">Ready to book?</p>
+          <h2 class="blog-post-aside__title">Get an itemised quote</h2>
+          <p>Send the suburb, job type and plans or photos — we reply with a clear scope and price.</p>
+          <p class="blog-post-aside__actions">
+            <a class="btn btn--primary" href="/contact/#quote">Request a quote</a>
+            <a class="btn btn--ghost" href="/blog/">All guides</a>
+          </p>
+        </div>
       </aside>
-      <h2>Questions</h2>
-      <Faq faqs={d.faqs} />
     </div>
   </article>
+
+  <section class="section section--soft faq-section" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head faq-section__head">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-h">Questions from this guide</h2>
+        <p>Short answers that sit with the article — ask us if yours is missing.</p>
+      </div>
+      <Faq faqs={d.faqs} columns={d.faqs.length >= 4 ? 2 : 1} />
+      <div class="faq-section__foot">
+        <p>Still deciding? Browse <a href="/services/">builders cleaning services</a> or the <a href="/faq/">full FAQ</a>.</p>
+        <p class="faq-section__cta">
+          <a class="btn btn--primary" href="/contact/#quote">Get a free quote</a>
+          <a class="btn btn--ghost" href="/blog/">More guides</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  {moreGuides.length > 0 && (
+    <section class="section blog-post-more" aria-labelledby="more-h">
+      <div class="wrap">
+        <div class="section-head blog-post-more__head">
+          <p class="eyebrow">Keep reading</p>
+          <h2 id="more-h">More builders clean guides</h2>
+          <p>Other plain-English answers from the same Brisbane crew.</p>
+        </div>
+        <div class="blog-post-more__grid">
+          {moreGuides.map((p) => (
+            <a class="blog-page-card" href={`/blog/${p.id}/`}>
+              <div class="blog-page-card__media">
+                <Photo
+                  photo={p.data.photo}
+                  alt={p.data.photoAlt}
+                  caption={false}
+                  crop={[16, 10]}
+                  class="blog-page-card__photo"
+                  sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw"
+                  widths={[360, 540, 720]}
+                />
+              </div>
+              <div class="blog-page-card__body">
+                <time class="blog-page-card__date" datetime={p.data.pubDate.toISOString().slice(0, 10)}>
+                  {fmt(p.data.pubDate)}
+                </time>
+                <h3 class="blog-page-card__title">{p.data.h1}</h3>
+                <p class="blog-page-card__summary">{p.data.summary}</p>
+                <span class="blog-page-card__more" aria-hidden="true">Read the guide</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
   <CtaBand />
 </BaseLayout>

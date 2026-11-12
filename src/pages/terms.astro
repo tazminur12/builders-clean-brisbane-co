@@ -1,25 +1,165 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
+import CtaButtons from '../components/CtaButtons.astro';
+import CtaBand from '../components/CtaBand.astro';
 import { SITE } from '../config/site';
+import { PHOTOS } from '../data/photos';
 import { breadcrumbList } from '../lib/schema';
 import { recleanTime } from '../lib/text';
+
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Terms', href: '/terms/' }];
+const reClean = recleanTime();
+
+const sections = [
+  {
+    id: 'quotes',
+    title: 'Quotes',
+    body: 'Quotes are based on the plans, photos and information you provide. The scope of each job is the list of items in your written quote. If the job on the day is materially different, we will talk to you before doing extra work.',
+  },
+  {
+    id: 'variations',
+    title: 'Variations',
+    body: 'Any change to the scope or price is agreed with you in writing before the work is done.',
+  },
+  {
+    id: 're-cleans',
+    title: 'Re-cleans',
+    body: `If an in-scope item is missed, tell us within ${reClean} of the clean and we will return to re-clean it.`,
+  },
+  {
+    id: 'access',
+    title: 'Access',
+    body: 'You are responsible for giving us safe access to the site, with working power and water, at the agreed time.',
+  },
+  {
+    id: 'website',
+    title: 'Website content',
+    body: 'Information on this website, including the price guide and checklists, is general information. Your written quote sets out the price and scope for your job.',
+  },
+];
+
+const nextLinks = [
+  {
+    href: '/privacy-policy/',
+    title: 'Privacy policy',
+    text: 'How we collect, use and store the details you send us.',
+  },
+  {
+    href: '/builders-clean-cost-brisbane/',
+    title: 'Price guide',
+    text: 'Starting prices — your written quote is the binding figure.',
+  },
+  {
+    href: '/contact/#quote',
+    title: 'Get a free quote',
+    text: 'Send suburb, job type and plans for an itemised quote.',
+  },
+];
 ---
-<BaseLayout title="Terms | Builders Clean Brisbane Co." description="The terms for using the Builders Clean Brisbane Co. website and for quotes, bookings, scope, variations and re-cleans on builders cleaning jobs in Brisbane." schema={[breadcrumbList(crumbs)]}>
-  <PageHead crumbs={crumbs} h1="Terms" />
-  <section class="section"><div class="wrap prose">
-    <p>These terms apply to this website and to quotes from {SITE.name} ({SITE.legalName}). Last updated: November 2026.</p>
-    <h2>Quotes</h2>
-    <p>Quotes are based on the plans, photos and information you provide. The scope of each job is the list of items in your written quote. If the job on the day is materially different, we will talk to you before doing extra work.</p>
-    <h2>Variations</h2>
-    <p>Any change to the scope or price is agreed with you in writing before the work is done.</p>
-    <h2>Re-cleans</h2>
-    <p>If an in-scope item is missed, tell us within {recleanTime()} of the clean and we will return to re-clean it.</p>
-    <h2>Access</h2>
-    <p>You are responsible for giving us safe access to the site, with working power and water, at the agreed time.</p>
-    <h2>Website content</h2>
-    <p>Information on this website, including the price guide and checklists, is general information. Your written quote sets out the price and scope for your job.</p>
-    <p>[FULL TERMS OF TRADE — TBC BY OWNER]</p>
-  </div></section>
+<BaseLayout
+  title="Terms | Builders Clean Brisbane Co."
+  description="The terms for using the Builders Clean Brisbane Co. website and for quotes, bookings, scope, variations and re-cleans on builders cleaning jobs in Brisbane."
+  schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS['new-home'].src}
+>
+  <PageHead
+    crumbs={crumbs}
+    h1="Terms"
+    eyebrow="Legal"
+    photo="new-home"
+    photoAlt="New home ready for handover after a builders clean in Brisbane"
+    meta={[
+      'Quotes & scope',
+      `Re-clean within ${reClean}`,
+      'Updated Nov 2026',
+    ]}
+  >
+    <div class="answer">
+      <p>
+        Terms for using this website and for quotes, bookings, scope, variations and re-cleans from {SITE.name}.
+      </p>
+    </div>
+    <CtaButtons on="teal" heroFallback class="mt-2" />
+  </PageHead>
+
+  <section class="section section--soft legal-page-intro" aria-labelledby="intro-h">
+    <div class="wrap legal-page-intro__inner">
+      <p class="eyebrow">Overview</p>
+      <h2 id="intro-h" class="sr-only">Overview</h2>
+      <p class="legal-page-intro__lead">
+        These terms apply to this website and to quotes from {SITE.name} ({SITE.legalName}). Last updated: November 2026.
+      </p>
+      <nav aria-label="Terms topics">
+        <ul class="legal-page-jump">
+          {sections.map((s) => (
+            <li><a class="legal-page-jump__chip" href={`#${s.id}`}>{s.title}</a></li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </section>
+
+  <section class="section legal-page-body">
+    <div class="wrap legal-page-body__layout">
+      <div class="legal-page-body__main">
+        {sections.map((s, i) => (
+          <article class="legal-page-block" id={s.id}>
+            <p class="legal-page-block__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+            <h2>{s.title}</h2>
+            <p>{s.body}</p>
+          </article>
+        ))}
+
+        <article class="legal-page-block legal-page-block--note" id="full-terms">
+          <p class="legal-page-block__n" aria-hidden="true">06</p>
+          <h2>Full terms of trade</h2>
+          <p>[FULL TERMS OF TRADE — TBC BY OWNER]</p>
+        </article>
+      </div>
+
+      <aside class="legal-page-aside" aria-label="Related">
+        <div class="legal-page-aside__card">
+          <p class="eyebrow">Booking</p>
+          <h2 class="legal-page-aside__title">Your quote is the scope</h2>
+          <p>
+            Website guides are general. The itemised quote you accept sets the price and the work for your job.
+          </p>
+          <p class="legal-page-aside__actions">
+            <a class="btn btn--primary" href="/contact/#quote">Get a quote</a>
+            <a class="btn btn--ghost" href="/privacy-policy/">Privacy policy</a>
+          </p>
+        </div>
+        <div class="legal-page-aside__card">
+          <p class="eyebrow">Also see</p>
+          <ul class="legal-page-aside__links">
+            <li><a href="/privacy-policy/">Privacy policy</a></li>
+            <li><a href="/builders-clean-checklist/">Checklist</a></li>
+            <li><a href="/faq/">FAQ</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section--mist legal-page-next" aria-labelledby="next-h">
+    <div class="wrap">
+      <div class="section-head legal-page-next__head">
+        <p class="eyebrow">Next</p>
+        <h2 id="next-h">Related pages</h2>
+        <p>Privacy, pricing, or request a quote.</p>
+      </div>
+      <div class="legal-page-next__grid">
+        {nextLinks.map((l) => (
+          <a class="svc-card" href={l.href}>
+            <h3 class="svc-card__title">{l.title}</h3>
+            <p class="svc-card__summary">{l.text}</p>
+            <span class="svc-card__more" aria-hidden="true">Open</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
 </BaseLayout>

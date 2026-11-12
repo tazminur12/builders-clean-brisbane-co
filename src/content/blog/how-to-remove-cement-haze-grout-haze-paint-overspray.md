@@ -1,5 +1,5 @@
 ---
-title: "How to Remove Cement Haze from Tiles | Builders Clean Brisbane Co."
+title: "Remove Cement Haze from Tiles | Builders Clean Brisbane Co."
 description: "How to remove cement haze from tiles, grout haze and paint overspray safely: why it happens, what not to use, steps for tile, glass, stone and concrete."
 h1: "How to Remove Cement Haze, Grout Haze and Paint Overspray"
 keyword: "how to remove cement haze from tiles"

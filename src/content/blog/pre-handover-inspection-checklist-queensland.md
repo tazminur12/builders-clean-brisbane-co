@@ -1,5 +1,5 @@
 ---
-title: "Pre-Handover Inspection Checklist QLD | Builders Clean Brisbane Co."
+title: "Pre-Handover Checklist QLD | Builders Clean Brisbane Co."
 description: "A pre-handover inspection checklist for Queensland homeowners: what inspectors look at, room-by-room checks, questions to ask your builder and when to clean."
 h1: "Pre-Handover Inspection Checklist for Brisbane Homeowners"
 keyword: "pre handover inspection checklist queensland"

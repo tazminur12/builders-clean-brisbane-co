@@ -239,7 +239,7 @@ export const SUBURBS: Suburb[] = [
     slug: 'fortitude-valley',
     name: 'Fortitude Valley',
     region: 'brisbane-city',
-    title: 'Builders Clean Fortitude Valley | Builders Clean Brisbane Co.',
+    title: 'Builders Clean in the Valley | Builders Clean Brisbane Co.',
     meta: 'Builders clean in Fortitude Valley. Apartment handovers, renovations and small commercial fit-outs. Request a quote with itemised pricing and a photo report.',
     h1: 'Builders Clean in Fortitude Valley',
     primary: 'builders clean fortitude valley',

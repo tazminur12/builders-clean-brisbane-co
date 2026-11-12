@@ -2,12 +2,125 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHead from '../../components/PageHead.astro';
 import Icon from '../../components/Icon.astro';
-import { CHECKLIST_PDF } from '../../data/checklist';
+import CtaBand from '../../components/CtaBand.astro';
+import { CHECKLIST, CHECKLIST_PDF } from '../../data/checklist';
+import { PHOTOS } from '../../data/photos';
+import { breadcrumbList } from '../../lib/schema';
+
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Builders clean checklist', href: '/builders-clean-checklist/' },
+  { label: 'Download', href: '/builders-clean-checklist/download/' },
+];
+const roomCount = CHECKLIST.length;
+const itemCount = CHECKLIST.reduce((n, g) => n + g.items.length, 0);
+const fileName = CHECKLIST_PDF.replace('/downloads/', '');
+
+const steps = [
+  ['Download the PDF', 'Save it to your phone or laptop. It is the same room-by-room list we use on every final clean.'],
+  ['Print or share', 'Print a copy for the walk, or send it to your cleaner so the quote matches the same scope.'],
+  ['Walk the home', 'Check glass at an angle, drawers inside, and fans overhead — top to bottom in each room.'],
+];
+
+const nextLinks = [
+  {
+    href: '/builders-clean-checklist/',
+    title: 'Full online checklist',
+    text: 'Browse every room on the page, then print from the browser if you prefer.',
+  },
+  {
+    href: '/builders-clean-cost-brisbane/',
+    title: 'Price guide',
+    text: 'See starting prices by property size and what moves the quote.',
+  },
+  {
+    href: '/contact/#quote',
+    title: 'Get a free quote',
+    text: 'Send suburb, job type and plans — we work this checklist for you.',
+  },
+];
 ---
-<BaseLayout title="Your Builders Clean Checklist PDF | Builders Clean Brisbane Co." description="Download your free builders clean checklist for Queensland homes as a PDF, ready to print or send to your cleaner before handover or move-in day." noindex>
-  <PageHead h1="Your checklist is ready" eyebrow="Download">
-    <p class="lead">Thanks. Download the builders clean checklist below. Print it, or send it to your cleaner before the job.</p>
-    <p class="mt-2"><a class="btn btn--lime" href={CHECKLIST_PDF} download><Icon name="download" />Download the PDF</a></p>
-    <p class="mt-2"><a href="/builders-clean-checklist/" style="color:var(--c-lime)">Back to the checklist</a> · <a href="/contact/" style="color:var(--c-lime)">Get a quote</a></p>
+<BaseLayout
+  title="Checklist PDF Download | Builders Clean Brisbane Co."
+  description="Download your free builders clean checklist for Queensland homes as a PDF, ready to print or send to your cleaner before handover or move-in day."
+  schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS.pantry.src}
+  noindex
+>
+  <PageHead
+    crumbs={crumbs}
+    h1="Your checklist is ready"
+    eyebrow="Download"
+    photo="pantry"
+    photoAlt="Pantry detail clean after a Brisbane build"
+    meta={[
+      `${roomCount} rooms`,
+      `${itemCount} items`,
+      'Free PDF',
+    ]}
+  >
+    <div class="answer">
+      <p>
+        Thanks. Download the builders clean checklist below — print it, or send it to your cleaner before the job.
+      </p>
+    </div>
+    <div class="btn-row mt-2">
+      <a class="btn btn--lime" href={CHECKLIST_PDF} download>
+        <Icon name="download" />Download the PDF
+      </a>
+      <a class="btn btn--ghost-light" href="/builders-clean-checklist/">Back to checklist</a>
+    </div>
   </PageHead>
+
+  <section class="section section--soft cl-dl-hero" aria-labelledby="dl-h">
+    <div class="wrap cl-dl-hero__grid">
+      <article class="cl-dl-hero__card" id="dl-h">
+        <p class="eyebrow">Your file</p>
+        <h2 class="cl-dl-hero__title">Builders clean checklist PDF</h2>
+        <p class="cl-dl-hero__file">{fileName}</p>
+        <p>
+          Queensland room-by-room scope for a full builders clean. Free to keep, print and share with your cleaner or site manager.
+        </p>
+        <p class="cl-dl-hero__actions">
+          <a class="btn btn--primary" href={CHECKLIST_PDF} download>
+            <Icon name="download" />Download now
+          </a>
+          <button class="btn btn--ghost" type="button" data-print>
+            <Icon name="print" />Print this page
+          </button>
+        </p>
+      </article>
+
+      <div class="cl-dl-hero__steps">
+        {steps.map(([title, text], i) => (
+          <article class="cl-dl-hero__step">
+            <p class="cl-dl-hero__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section cl-dl-next" aria-labelledby="next-h">
+    <div class="wrap">
+      <div class="section-head cl-dl-next__head">
+        <p class="eyebrow">Next step</p>
+        <h2 id="next-h">While you have the list open</h2>
+        <p>Check prices, walk the online checklist again, or send plans for an itemised quote.</p>
+      </div>
+      <div class="cl-dl-next__grid">
+        {nextLinks.map((l) => (
+          <a class="svc-card" href={l.href}>
+            <h3 class="svc-card__title">{l.title}</h3>
+            <p class="svc-card__summary">{l.text}</p>
+            <span class="svc-card__more" aria-hidden="true">Open</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
 </BaseLayout>

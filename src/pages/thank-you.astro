@@ -1,11 +1,137 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { SITE, hasEmail, hasPhone, telHref } from '../config/site';
+import { PHOTOS } from '../data/photos';
+import { breadcrumbList } from '../lib/schema';
 import { quoteTime } from '../lib/text';
+
+const crumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Contact', href: '/contact/' },
+  { label: 'Thank you', href: '/thank-you/' },
+];
+const turnaround = quoteTime();
+
+const steps = [
+  ['We review your details', 'Suburb, job type, handover date and any plans or photos you sent — so the scope matches the site.'],
+  ['You get an itemised quote', `Within ${turnaround}. Every room and surface in scope, what is not included, and the date we can hold.`],
+  ['Confirm when you are ready', 'Reply to lock the date. If your handover moves, just email us and we will rebook.'],
+];
+
+const nextLinks = [
+  {
+    href: '/builders-clean-checklist/',
+    title: 'Builders clean checklist',
+    text: 'Room-by-room list of what a full final clean includes.',
+  },
+  {
+    href: '/builders-clean-cost-brisbane/',
+    title: 'Price guide',
+    text: 'Starting prices by property size and what moves the quote.',
+  },
+  {
+    href: '/our-work/',
+    title: 'Our work',
+    text: 'Real Brisbane job photos — polished concrete, baths, kitchens and more.',
+  },
+];
 ---
-<BaseLayout title="Thanks, Your Quote Request Is In | Builders Clean Brisbane Co." description="Thanks for your builders clean quote request. We will reply with an itemised quote shortly. In the meantime, read our price guide and builders clean checklist." noindex>
-  <PageHead h1="Thanks, we have your request" eyebrow="Quote request received">
-    <p class="lead">We will reply with an itemised quote within {quoteTime()}. If your handover date changes in the meantime, just reply to our email.</p>
-    <p class="mt-2"><a href="/builders-clean-checklist/" style="color:var(--c-lime)">Builders clean checklist</a> · <a href="/builders-clean-cost-brisbane/" style="color:var(--c-lime)">Price guide</a> · <a href="/" style="color:var(--c-lime)">Home</a></p>
+<BaseLayout
+  title="Quote Request Received | Builders Clean Brisbane Co."
+  description="Thanks for your builders clean quote request. We will reply with an itemised quote shortly. In the meantime, read our price guide and builders clean checklist."
+  schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS['new-home'].src}
+  noindex
+>
+  <PageHead
+    crumbs={crumbs}
+    h1="Thanks, we have your request"
+    eyebrow="Quote request received"
+    photo="new-home"
+    photoAlt="New home ready for handover after a builders clean in Brisbane"
+    meta={[
+      `Reply within ${turnaround}`,
+      'Itemised quote',
+      'No obligation',
+    ]}
+  >
+    <div class="answer">
+      <p>
+        We will reply with an itemised quote within {turnaround}. If your handover date changes in the meantime, just reply to our email.
+      </p>
+    </div>
+    <div class="btn-row mt-2">
+      <a class="btn btn--lime" href="/builders-clean-checklist/">
+        <Icon name="download" />See the checklist
+      </a>
+      <a class="btn btn--ghost-light" href="/">Back to home</a>
+    </div>
   </PageHead>
+
+  <section class="section section--soft ty-page" aria-labelledby="next-steps-h">
+    <div class="wrap ty-page__grid">
+      <article class="ty-page__card">
+        <p class="eyebrow">Confirmed</p>
+        <h2 id="next-steps-h" class="ty-page__title">Your quote request is with us</h2>
+        <p>
+          Watch your inbox{hasEmail ? ` (and spam, just in case)` : ''}. We send a clear, itemised quote — not a vague hourly rate.
+        </p>
+        <ul class="ticks ty-page__ticks">
+          <li>Quote within {turnaround}</li>
+          <li>Scope listed room by room</li>
+          <li>Date held once you confirm</li>
+        </ul>
+        {(hasPhone || hasEmail) && (
+          <p class="ty-page__contact">
+            Need to add plans or change the date?
+            {hasEmail && (
+              <>
+                {' '}<a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+              </>
+            )}
+            {hasPhone && (
+              <>
+                {hasEmail ? ' · ' : ' '}
+                <a href={telHref}>Call {SITE.phoneDisplay}</a>
+              </>
+            )}
+          </p>
+        )}
+      </article>
+
+      <div class="ty-page__steps">
+        {steps.map(([title, text], i) => (
+          <article class="ty-page__step">
+            <p class="ty-page__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section ty-page-next" aria-labelledby="browse-h">
+    <div class="wrap">
+      <div class="section-head ty-page-next__head">
+        <p class="eyebrow">While you wait</p>
+        <h2 id="browse-h">Useful reading before the quote lands</h2>
+        <p>Check the checklist, skim the price guide, or see recent Brisbane jobs.</p>
+      </div>
+      <div class="ty-page-next__grid">
+        {nextLinks.map((l) => (
+          <a class="svc-card" href={l.href}>
+            <h3 class="svc-card__title">{l.title}</h3>
+            <p class="svc-card__summary">{l.text}</p>
+            <span class="svc-card__more" aria-hidden="true">Open</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
 </BaseLayout>

@@ -6,21 +6,67 @@ import Faq from '../../components/Faq.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { CHECKLIST, CHECKLIST_PDF } from '../../data/checklist';
 import { CHECKLIST_FAQS } from '../../data/faqs';
+import { PHOTOS } from '../../data/photos';
 import { breadcrumbList } from '../../lib/schema';
 
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Builders clean checklist', href: '/builders-clean-checklist/' }];
+const roomCount = CHECKLIST.length;
+const itemCount = CHECKLIST.reduce((n, g) => n + g.items.length, 0);
+
+const uses = [
+  [
+    'Before handover',
+    'Walk each room in daylight with this list. Check glass at an angle, run a finger along door tops and inside drawers, and look up at fans and pendants.',
+  ],
+  [
+    'To brief a cleaner',
+    'Send the list and ask them to confirm which items are in their quote. It is the easiest way to compare quotes fairly.',
+  ],
+  [
+    'To understand the stages',
+    'A rough clean covers debris and dust; a final builders clean covers everything here; a sparkle clean adds the detail work.',
+  ],
+];
+
+const nextLinks = [
+  {
+    href: '/services/builders-final-clean-brisbane/',
+    title: 'Final builders clean',
+    text: 'The full room-by-room clean this checklist describes.',
+  },
+  {
+    href: '/blog/pre-handover-inspection-checklist-queensland/',
+    title: 'Pre-handover inspection',
+    text: 'Build defects vs cleaning items — what to note on the walk.',
+  },
+  {
+    href: '/contact/#quote',
+    title: 'Get a free quote',
+    text: 'Send suburb, job type and plans — we work this list for you.',
+  },
+];
 ---
 <BaseLayout
-  title="Builders Clean Checklist Queensland | Builders Clean Brisbane Co."
+  title="Builders Clean Checklist QLD | Builders Clean Brisbane Co."
   description="Free builders clean checklist for Queensland. Room-by-room list of what a full builders clean includes, to check a clean or brief a cleaner. Download the PDF."
   schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS.pantry.src}
 >
-  <PageHead crumbs={crumbs} h1="Builders Clean Checklist (Queensland)" eyebrow="Free checklist">
+  <PageHead
+    crumbs={crumbs}
+    h1="Builders Clean Checklist (Queensland)"
+    eyebrow="Free checklist"
+    photo="pantry"
+    photoAlt="Pantry detail clean after a Brisbane build"
+    meta={[
+      `${roomCount} rooms`,
+      `${itemCount} checklist items`,
+      'Free to print',
+    ]}
+  >
     <div class="answer">
       <p>
-        This builders clean checklist lists everything a full builders clean should include, room by room. Builders Clean Brisbane Co. is a
-        Brisbane builders cleaning company that uses this list on every final clean for builders and homeowners across Queensland’s south-east.
-        Use it to check a clean before handover, to brief a cleaner, or to compare quotes on the same scope. It is free to read, print and share.
+        Everything a full builders clean should include, room by room — free to read, print and share across Queensland’s south-east.
       </p>
     </div>
     <div class="btn-row mt-2 no-print">
@@ -29,17 +75,49 @@ const crumbs = [{ label: 'Home', href: '/' }, { label: 'Builders clean checklist
     </div>
   </PageHead>
 
-  <section class="section" aria-labelledby="list-h">
+  <section class="section section--soft cl-page-intro no-print" aria-labelledby="intro-h">
+    <div class="wrap">
+      <div class="section-head cl-page-intro__head">
+        <p class="eyebrow">How to use it</p>
+        <h2 id="intro-h">Check a clean, brief a cleaner, compare quotes</h2>
+        <p>
+          Builders Clean Brisbane Co. uses this list on every final clean. Builders and homeowners use the same scope to walk the home or brief a quote.
+        </p>
+      </div>
+      <div class="cl-page-intro__grid">
+        {uses.map(([title, text], i) => (
+          <article class="cl-page-intro__card">
+            <p class="cl-page-intro__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section cl-page-list" aria-labelledby="list-h">
     <div class="wrap">
       <p class="print-only"><strong>Builders Clean Brisbane Co.</strong> · builderscleanbrisbaneco.com.au/builders-clean-checklist/</p>
-      <div class="section-head">
+      <div class="section-head cl-page-list__head">
         <p class="eyebrow">Room by room</p>
         <h2 id="list-h">What does a builders clean include?</h2>
-        <p>Tick each item off as you walk the home. Work top to bottom in each room: ceilings first, floors last.</p>
+        <p>Tick each item as you walk the home. Work top to bottom in each room: ceilings first, floors last.</p>
       </div>
+
+      <nav class="cl-page-jump no-print" aria-label="Checklist rooms">
+        <ul class="cl-page-jump__list">
+          {CHECKLIST.map((g) => (
+            <li>
+              <a class="cl-page-jump__chip" href={`#room-${g.room.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>{g.room}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
       <div class="checklist-grid">
         {CHECKLIST.map((g) => (
-          <div class="check-group">
+          <div class="check-group" id={`room-${g.room.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
             <h3>{g.room}</h3>
             <ul class="ticks">{g.items.map((i) => <li>{i}</li>)}</ul>
           </div>
@@ -48,38 +126,96 @@ const crumbs = [{ label: 'Home', href: '/' }, { label: 'Builders clean checklist
     </div>
   </section>
 
-  <section class="section section--mist no-print" aria-labelledby="use-h">
-    <div class="wrap split">
-      <div>
-        <h2 id="use-h">How to use this builders clean scope</h2>
-        <p><strong>Before handover:</strong> walk each room in daylight with this list. Check glass at an angle, run a finger along door tops and inside drawers, and look up at fans and pendants. Our <a href="/blog/pre-handover-inspection-checklist-queensland/">pre-handover inspection checklist</a> covers the build items as well.</p>
-        <p><strong>To brief a cleaner:</strong> send the list and ask them to confirm which items are in their quote. It is the easiest way to compare quotes fairly.</p>
-        <p><strong>To understand the stages:</strong> a rough clean covers only the debris and dust items; a <a href="/services/builders-final-clean-brisbane/">final builders clean</a> covers everything here; a <a href="/services/sparkle-clean-brisbane/">sparkle clean</a> adds the detail work.</p>
+  <section class="section section--mist cl-page-pdf no-print" aria-labelledby="pdf-h">
+    <div class="wrap cl-page-pdf__grid">
+      <div class="cl-page-pdf__copy">
+        <p class="eyebrow">Stages</p>
+        <h2 id="pdf-h">Match the list to the clean stage</h2>
+        <p>
+          A <a href="/services/builders-rough-clean-brisbane/">rough clean</a> covers debris and dust between trades.
+          A <a href="/services/builders-final-clean-brisbane/">final builders clean</a> covers everything on this list.
+          A <a href="/services/sparkle-clean-brisbane/">sparkle clean</a> adds the last detail pass.
+        </p>
+        <p>
+          For the build walk itself, see our
+          <a href="/blog/pre-handover-inspection-checklist-queensland/">pre-handover inspection checklist</a>.
+        </p>
+        <ul class="ticks cl-page-pdf__ticks">
+          <li>Same scope we use on every final clean</li>
+          <li>Printable from this page</li>
+          <li>PDF download with optional email</li>
+        </ul>
       </div>
-      <div id="pdf" class="form-card">
-        <h2 style="font-size:30px">Get the PDF checklist</h2>
-        <p>Enter your email and we will take you straight to the download. We may send one follow-up about your clean; no newsletters.</p>
+
+      <div id="pdf" class="form-card cl-page-pdf__form">
+        <div class="form-card__head">
+          <h2 class="form-card__title">Get the PDF checklist</h2>
+          <p class="form-card__sub">Enter your email and we will take you straight to the download. We may send one follow-up about your clean; no newsletters.</p>
+        </div>
         <form class="form" name="checklist-download" method="POST" action="/builders-clean-checklist/download/" data-netlify="true" netlify-honeypot="bot-field">
           <input type="hidden" name="form-name" value="checklist-download" />
           <p class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="bot-field" tabindex="-1" autocomplete="off" /></label></p>
-          <div><label for="cl-email">Email</label><input id="cl-email" name="email" type="email" autocomplete="email" required /></div>
+          <div>
+            <label for="cl-email">Email</label>
+            <input id="cl-email" name="email" type="email" autocomplete="email" required />
+          </div>
           <div>
             <label for="cl-role">I am a…</label>
-            <select id="cl-role" name="role"><option>Homeowner</option><option>Builder or site manager</option><option>Investor or agent</option><option>Cleaner</option><option>Other</option></select>
+            <select id="cl-role" name="role">
+              <option>Homeowner</option>
+              <option>Builder or site manager</option>
+              <option>Investor or agent</option>
+              <option>Cleaner</option>
+              <option>Other</option>
+            </select>
           </div>
           <button class="btn btn--primary" type="submit"><Icon name="download" />Send me the PDF</button>
         </form>
-        <p class="small muted mt-1">PDF: {CHECKLIST_PDF.replace('/downloads/', '')}</p>
+        <p class="cl-page-pdf__file">PDF: {CHECKLIST_PDF.replace('/downloads/', '')}</p>
       </div>
     </div>
   </section>
 
-  <section class="section no-print" aria-labelledby="faq-h">
-    <div class="wrap wrap--narrow">
-      <h2 id="faq-h">Builders clean checklist questions</h2>
-      <Faq faqs={CHECKLIST_FAQS} />
-      <p class="mt-2">Want us to work through the builders clean checklist for you? See <a href="/">builders clean Brisbane</a> or <a href="/contact/">get a quote</a>.</p>
+  <section class="section section--soft faq-section no-print" aria-labelledby="faq-h">
+    <div class="wrap">
+      <div class="section-head faq-section__head">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-h">Builders clean checklist questions</h2>
+        <p>Scope, stages and how to use the list on site.</p>
+      </div>
+      <Faq faqs={CHECKLIST_FAQS} columns={CHECKLIST_FAQS.length >= 4 ? 2 : 1} />
+      <div class="faq-section__foot">
+        <p>
+          Want us to work through this checklist for you? See
+          {' '}<a href="/">builders clean Brisbane</a> or
+          {' '}<a href="/contact/#quote">get a quote</a>.
+        </p>
+        <p class="faq-section__cta">
+          <a class="btn btn--primary" href="/contact/#quote">Get a free quote</a>
+          <a class="btn btn--ghost" href="/services/">All services</a>
+        </p>
+      </div>
     </div>
   </section>
+
+  <section class="section cl-page-next no-print" aria-labelledby="next-h">
+    <div class="wrap">
+      <div class="section-head cl-page-next__head">
+        <p class="eyebrow">Next step</p>
+        <h2 id="next-h">From checklist to clean</h2>
+        <p>Book the final clean, read the handover guide, or send plans for an itemised quote.</p>
+      </div>
+      <div class="cl-page-next__grid">
+        {nextLinks.map((l) => (
+          <a class="svc-card" href={l.href}>
+            <h3 class="svc-card__title">{l.title}</h3>
+            <p class="svc-card__summary">{l.text}</p>
+            <span class="svc-card__more" aria-hidden="true">Open</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <div class="no-print"><CtaBand /></div>
 </BaseLayout>

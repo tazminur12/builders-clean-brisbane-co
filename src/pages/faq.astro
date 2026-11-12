@@ -2,40 +2,125 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
 import Faq from '../components/Faq.astro';
+import CtaButtons from '../components/CtaButtons.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { FAQ_HUB } from '../data/faqs';
+import { PHOTOS } from '../data/photos';
 import { breadcrumbList, faqPage } from '../lib/schema';
 
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'FAQ', href: '/faq/' }];
 const all = FAQ_HUB.flatMap((g) => g.faqs);
+const total = all.length;
+
+const nextLinks = [
+  {
+    href: '/services/',
+    title: 'Builders cleaning services',
+    text: 'Seventeen services from rough clean to sparkle and fit-out.',
+  },
+  {
+    href: '/builders-clean-cost-brisbane/',
+    title: 'Price guide',
+    text: 'Starting prices by property size and what moves the quote.',
+  },
+  {
+    href: '/contact/#quote',
+    title: 'Get a free quote',
+    text: 'Send suburb, job type and plans — itemised quote back fast.',
+  },
+];
 ---
 <BaseLayout
   title="Builders Clean FAQ Brisbane | Builders Clean Brisbane Co."
   description="Builders clean questions answered: how long a builders clean takes, what is included, who pays, access, insurance and residue. Brisbane answers. Get a quote."
   schema={[breadcrumbList(crumbs), faqPage(all)]}
+  ogImage={PHOTOS.kitchen.src}
 >
-  <PageHead crumbs={crumbs} h1="Builders Clean Questions Answered" eyebrow="FAQ">
+  <PageHead
+    crumbs={crumbs}
+    h1="Builders Clean Questions Answered"
+    eyebrow="FAQ"
+    photo="kitchen"
+    photoAlt="Kitchen after final builders clean, Brisbane new build"
+    meta={[
+      `${total} answers`,
+      'Grouped by topic',
+      'Ask us anything',
+    ]}
+  >
     <div class="answer">
       <p>
-        How long does a builders clean take? For most single homes in Brisbane, one day on site; larger homes and heavy residue take longer.
-        Builders Clean Brisbane Co. is a Brisbane builders cleaning company, and these are the questions builders and homeowners ask us most,
-        grouped by topic. Can’t find yours? <a href="/contact/" style="color:var(--c-lime)">Ask us</a>.
+        How long a clean takes, what is included, who pays, access, insurance and residue — the questions Brisbane builders and homeowners ask most.
       </p>
     </div>
-    <nav aria-label="FAQ topics" class="mt-2">
-      <ul class="chips">{FAQ_HUB.map((g) => <li><a href={`#${g.id}`}>{g.group}</a></li>)}</ul>
-    </nav>
+    <CtaButtons on="teal" showWhatsapp heroFallback class="mt-2" />
   </PageHead>
-  <section class="section">
-    <div class="wrap wrap--narrow">
-      {FAQ_HUB.map((g) => (
-        <div class="mb-3" id={g.id}>
-          <h2>{g.group}</h2>
-          <Faq faqs={g.faqs} schema={false} />
-        </div>
-      ))}
-      <p class="lead">Ready to book? See our <a href="/services/">builders cleaning services</a>, the <a href="/builders-clean-cost-brisbane/">price guide</a>, or <a href="/">builders clean Brisbane</a>.</p>
+
+  <section class="section section--soft faq-page-jump" aria-labelledby="jump-h">
+    <div class="wrap">
+      <div class="section-head faq-page-jump__head">
+        <p class="eyebrow">Browse by topic</p>
+        <h2 id="jump-h">Jump to the answers you need</h2>
+        <p>
+          {FAQ_HUB.length} topics, {total} questions. Can’t find yours?
+          {' '}<a href="/contact/">Ask us</a>.
+        </p>
+      </div>
+      <nav aria-label="FAQ topics">
+        <ul class="faq-page-jump__list">
+          {FAQ_HUB.map((g, i) => (
+            <li>
+              <a class="faq-page-jump__chip" href={`#${g.id}`}>
+                <span class="faq-page-jump__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                <span>{g.group}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </div>
   </section>
+
+  {FAQ_HUB.map((g, i) => (
+    <section
+      class:list={['section', 'faq-page-group', { 'section--mist': i % 2 === 1 }]}
+      id={g.id}
+      aria-labelledby={`${g.id}-h`}
+    >
+      <div class="wrap">
+        <div class="section-head faq-page-group__head">
+          <p class="eyebrow">
+            <span aria-hidden="true">{String(i + 1).padStart(2, '0')} · </span>{g.group}
+          </p>
+          <h2 id={`${g.id}-h`}>{g.group}</h2>
+          <p>{g.faqs.length} questions in this topic.</p>
+        </div>
+        <Faq faqs={g.faqs} schema={false} columns={g.faqs.length >= 4 ? 2 : 1} />
+      </div>
+    </section>
+  ))}
+
+  <section class="section section--soft faq-page-next" aria-labelledby="next-h">
+    <div class="wrap">
+      <div class="section-head faq-page-next__head">
+        <p class="eyebrow">Still deciding</p>
+        <h2 id="next-h">Ready for the next step?</h2>
+        <p>
+          Browse services, check the price guide, or send plans for an itemised quote. Prefer a direct answer?
+          {' '}<a href="/contact/">Contact us</a>.
+        </p>
+      </div>
+      <div class="faq-page-next__grid">
+        {nextLinks.map((l) => (
+          <a class="svc-card" href={l.href}>
+            <h3 class="svc-card__title">{l.title}</h3>
+            <p class="svc-card__summary">{l.text}</p>
+            <span class="svc-card__more" aria-hidden="true">Open</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <CtaBand />
 </BaseLayout>

@@ -1,5 +1,5 @@
 ---
-title: "Who Cleans a New Home in Queensland? | Builders Clean Brisbane Co."
+title: "Who Cleans a New QLD Home? | Builders Clean Brisbane Co."
 description: "Who is responsible for cleaning a new home in Queensland: what contracts usually say, builder clean vs owner clean, and when to book a clean before move-in."
 h1: "Who Is Responsible for Cleaning a New Home in Queensland?"
 keyword: "who is responsible for cleaning a new home queensland"

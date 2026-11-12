@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
 import Photo from '../components/Photo.astro';
+import CtaButtons from '../components/CtaButtons.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { PHOTOS, PHOTO_GROUPS, type PhotoKey } from '../data/photos';
 import { breadcrumbList } from '../lib/schema';
@@ -9,6 +10,7 @@ import { breadcrumbList } from '../lib/schema';
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Our work', href: '/our-work/' }];
 const keys = Object.keys(PHOTOS) as PhotoKey[];
 const groups = Object.entries(PHOTO_GROUPS);
+
 const links: Record<PhotoKey, [string, string]> = {
   'polished-concrete': ['/services/floor-cleaning-after-construction-brisbane/', 'Floor cleaning after construction'],
   'living-dining': ['/services/post-construction-cleaning-brisbane/', 'Post construction cleaning'],
@@ -21,6 +23,12 @@ const links: Record<PhotoKey, [string, string]> = {
   stairs: ['/services/sparkle-clean-brisbane/', 'Sparkle clean'],
   pantry: ['/services/commercial-fit-out-cleaning-brisbane/', 'Detail and fit-out cleaning'],
 };
+
+const highlights = [
+  ['Real Brisbane jobs', 'Polished concrete, black tile, timber stairs, stone and big glass — photographed after the clean.'],
+  ['No stock photos', 'Every image is from our own work. No AI images, no library shots.'],
+  ['Photo report on every job', 'Clients get before-and-after proof like the gallery below.'],
+];
 ---
 <BaseLayout
   title="Builders Clean Photos Brisbane | Builders Clean Brisbane Co."
@@ -28,42 +36,124 @@ const links: Record<PhotoKey, [string, string]> = {
   schema={[breadcrumbList(crumbs)]}
   ogImage={PHOTOS['living-dining'].src}
 >
-  <PageHead crumbs={crumbs} h1="Our Work: Builders Clean Photos in Brisbane" eyebrow="Gallery">
+  <PageHead
+    crumbs={crumbs}
+    h1="Our Work: Builders Clean Photos in Brisbane"
+    eyebrow="Gallery"
+    photo="living-dining"
+    photoAlt="Living and dining room after a post-construction clean in Brisbane"
+    meta={[
+      `${keys.length} real job photos`,
+      'No stock, no AI',
+      'Filter by job type',
+    ]}
+  >
     <div class="answer">
       <p>
-        These builders clean photos are from our Brisbane jobs: polished concrete, black tile, timber stairs, stone benchtops and big glass,
-        photographed after the clean. Builders Clean Brisbane Co. is a Brisbane builders cleaning company, and we only show our own work. No
-        stock photos, no AI images. Filter by job type below.
+        Real Brisbane jobs — polished concrete, black tile, timber stairs and big glass — photographed after the clean.
       </p>
     </div>
+    <CtaButtons on="teal" showWhatsapp heroFallback class="mt-2" />
   </PageHead>
 
-  <section class="section" aria-labelledby="gal-h">
-    <div class="wrap gallery">
-      <h2 id="gal-h" class="sr-only">Photo gallery</h2>
-      <fieldset class="filters">
-        <legend class="sr-only">Filter photos by job type</legend>
-        <input type="radio" name="f" id="f-all" checked /><label for="f-all">All</label>
-        {groups.map(([k, label]) => (<><input type="radio" name="f" id={`f-${k}`} /><label for={`f-${k}`}>{label}</label></>))}
-      </fieldset>
-      <div class="photo-grid photo-grid--3">
-        {keys.map((k) => (
-          <div class="gallery__item" data-group={PHOTOS[k].group}>
-            <Photo photo={k} sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw" />
-            <p class="small"><a href={links[k][0]}>{links[k][1]}</a></p>
-          </div>
+  <section class="section section--soft work-page-intro" aria-labelledby="intro-h">
+    <div class="wrap">
+      <div class="section-head work-page-intro__head">
+        <p class="eyebrow">What you’re looking at</p>
+        <h2 id="intro-h">Proof from the finishes that show every speck</h2>
+        <p>
+          Builders Clean Brisbane Co. only shows our own work. Filter by job type, open a related service, then send plans for a quote.
+        </p>
+      </div>
+      <div class="work-page-intro__grid">
+        {highlights.map(([title, text], i) => (
+          <article class="work-page-intro__card">
+            <p class="work-page-intro__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </article>
         ))}
       </div>
-      <p class="mt-2 muted">Photos are from our Brisbane jobs.</p>
-      <!-- TODO: real job photos of rough clean, apartment, commercial fit-out, window cleaning, residue removal, site clean-up -->
     </div>
   </section>
 
-  <section class="section section--mist" aria-labelledby="next-h">
-    <div class="wrap wrap--narrow">
-      <h2 id="next-h">Want your build to look like this?</h2>
-      <p>Every job gets a before-and-after photo report like these. See our <a href="/services/">builders cleaning services</a>, the <a href="/areas/">areas we cover</a>, or go back to <a href="/">builders clean Brisbane</a>.</p>
+  <section class="section work-page-gallery" aria-labelledby="gal-h">
+    <div class="wrap gallery">
+      <div class="section-head work-page-gallery__head">
+        <p class="eyebrow">Photo gallery</p>
+        <h2 id="gal-h">Browse by finish and job type</h2>
+        <p>Tap a filter to narrow the set. Each photo links to the matching service.</p>
+      </div>
+
+      <fieldset class="filters">
+        <legend class="sr-only">Filter photos by job type</legend>
+        <input type="radio" name="f" id="f-all" checked />
+        <label for="f-all">All</label>
+        {groups.map(([k, label]) => (
+          <>
+            <input type="radio" name="f" id={`f-${k}`} />
+            <label for={`f-${k}`}>{label}</label>
+          </>
+        ))}
+      </fieldset>
+
+      <div class="work-page-grid">
+        {keys.map((k) => (
+          <article class="gallery__item work-page-card" data-group={PHOTOS[k].group}>
+            <div class="work-page-card__media">
+              <Photo
+                photo={k}
+                caption={false}
+                crop={[4, 3]}
+                class="work-page-card__photo"
+                sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw"
+                widths={[360, 540, 720, 860]}
+              />
+            </div>
+            <div class="work-page-card__body">
+              <p class="work-page-card__group">{PHOTO_GROUPS[PHOTOS[k].group]}</p>
+              <p class="work-page-card__caption">{PHOTOS[k].caption}</p>
+              <a class="work-page-card__link" href={links[k][0]}>{links[k][1]}</a>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <p class="work-page-gallery__note">
+        Photos are from our Brisbane jobs.
+        <!-- TODO: real job photos of rough clean, apartment, commercial fit-out, window cleaning, residue removal, site clean-up -->
+      </p>
     </div>
   </section>
+
+  <section class="section section--mist work-page-next" aria-labelledby="next-h">
+    <div class="wrap">
+      <div class="section-head work-page-next__head">
+        <p class="eyebrow">Next step</p>
+        <h2 id="next-h">Want your build to look like this?</h2>
+        <p>
+          Every job gets a before-and-after photo report. Pick a service, check your suburb, or send plans for an itemised quote.
+        </p>
+      </div>
+      <div class="work-page-next__grid">
+        <a class="svc-card" href="/services/">
+          <h3 class="svc-card__title">Builders cleaning services</h3>
+          <p class="svc-card__summary">Seventeen services from rough clean to sparkle and fit-out.</p>
+          <span class="svc-card__more" aria-hidden="true">Browse services</span>
+        </a>
+        <a class="svc-card" href="/areas/">
+          <h3 class="svc-card__title">Areas we cover</h3>
+          <p class="svc-card__summary">Brisbane City to the growth corridors — find your suburb.</p>
+          <span class="svc-card__more" aria-hidden="true">See areas</span>
+        </a>
+        <a class="svc-card" href="/contact/#quote">
+          <h3 class="svc-card__title">Get a free quote</h3>
+          <p class="svc-card__summary">Send suburb, job type and plans — itemised quote back fast.</p>
+          <span class="svc-card__more" aria-hidden="true">Request quote</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <CtaBand />
 </BaseLayout>

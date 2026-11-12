@@ -3,31 +3,168 @@ import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHead from '../../components/PageHead.astro';
 import Photo from '../../components/Photo.astro';
+import CtaButtons from '../../components/CtaButtons.astro';
 import CtaBand from '../../components/CtaBand.astro';
+import { PHOTOS } from '../../data/photos';
 import { breadcrumbList } from '../../lib/schema';
 
 const posts = (await getCollection('blog')).sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const [featured, ...rest] = posts;
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Guides', href: '/blog/' }];
+const fmt = (dt: Date) => dt.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' });
+
+const highlights = [
+  ['Plain English', 'Written for Brisbane builders and homeowners — no fluff, no jargon.'],
+  ['From the crew', 'Answers come from the same team that quotes and cleans the jobs.'],
+  ['Practical next steps', 'Every guide links to services, prices or the checklist you need.'],
+];
+
+const nextLinks = [
+  {
+    href: '/faq/',
+    title: 'FAQ',
+    text: 'Twenty-four quick answers on booking, scope, access and insurance.',
+  },
+  {
+    href: '/builders-clean-checklist/',
+    title: 'Builders clean checklist',
+    text: 'Room-by-room list of what a proper final clean covers.',
+  },
+  {
+    href: '/contact/#quote',
+    title: 'Get a free quote',
+    text: 'Send suburb, job type and plans — itemised quote back fast.',
+  },
+];
 ---
 <BaseLayout
   title="Builders Clean Guides Brisbane | Builders Clean Brisbane Co."
   description="Plain-English guides on builders cleans in Queensland: who is responsible, what it costs, stages, handover checks and removing cement haze and paint overspray."
   schema={[breadcrumbList(crumbs)]}
+  ogImage={PHOTOS.stairs.src}
 >
-  <PageHead crumbs={crumbs} h1="Builders Clean Guides for Brisbane" eyebrow="Guides">
-    <p class="lead">Straight answers to the questions builders and homeowners ask us most, written by a Brisbane builders cleaning crew.</p>
+  <PageHead
+    crumbs={crumbs}
+    h1="Builders Clean Guides for Brisbane"
+    eyebrow="Guides"
+    photo="stairs"
+    photoAlt="Timber stairs after a sparkle clean in Brisbane"
+    meta={[
+      `${posts.length} guides`,
+      'Plain English',
+      'Updated for Brisbane',
+    ]}
+  >
+    <div class="answer">
+      <p>
+        Straight answers on cost, stages, responsibility, handover checks and residue — written by a Brisbane builders cleaning crew.
+      </p>
+    </div>
+    <CtaButtons on="teal" showWhatsapp heroFallback class="mt-2" />
   </PageHead>
-  <section class="section">
-    <div class="wrap grid grid--3">
-      {posts.map((p) => (
-        <a class="card card--link" href={`/blog/${p.id}/`}>
-          <Photo photo={p.data.photo} alt={p.data.photoAlt} caption={false} crop={[16, 10]} sizes="(min-width: 960px) 380px, 100vw" widths={[360, 540, 720]} />
-          <h2 style="font-size:26px;margin:8px 0 0">{p.data.h1}</h2>
-          <p class="small">{p.data.summary}</p>
-          <span class="card__more" aria-hidden="true">Read the guide</span>
-        </a>
-      ))}
+
+  <section class="section section--soft blog-page-intro" aria-labelledby="intro-h">
+    <div class="wrap">
+      <div class="section-head blog-page-intro__head">
+        <p class="eyebrow">Why these guides</p>
+        <h2 id="intro-h">Answers before you book a clean</h2>
+        <p>
+          Short, practical reading for anyone comparing quotes, planning a handover, or deciding who pays for the clean.
+        </p>
+      </div>
+      <div class="blog-page-intro__grid">
+        {highlights.map(([title, text], i) => (
+          <article class="blog-page-intro__card">
+            <p class="blog-page-intro__n" aria-hidden="true">{String(i + 1).padStart(2, '0')}</p>
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </article>
+        ))}
+      </div>
     </div>
   </section>
+
+  <section class="section blog-page-list" aria-labelledby="list-h">
+    <div class="wrap">
+      <div class="section-head blog-page-list__head">
+        <p class="eyebrow">All guides</p>
+        <h2 id="list-h">Browse the library</h2>
+        <p>Newest first. Pick a topic, then follow the links to services or a quote.</p>
+      </div>
+
+      {featured && (
+        <a class="blog-page-feature" href={`/blog/${featured.id}/`}>
+          <div class="blog-page-feature__media">
+            <Photo
+              photo={featured.data.photo}
+              alt={featured.data.photoAlt}
+              caption={false}
+              crop={[16, 10]}
+              class="blog-page-feature__photo"
+              sizes="(min-width: 960px) 560px, 100vw"
+              widths={[360, 540, 720, 860]}
+            />
+          </div>
+          <div class="blog-page-feature__body">
+            <p class="blog-page-feature__meta">
+              <span class="blog-page-feature__tag">Latest guide</span>
+              <time datetime={featured.data.pubDate.toISOString().slice(0, 10)}>{fmt(featured.data.pubDate)}</time>
+            </p>
+            <h3 class="blog-page-feature__title">{featured.data.h1}</h3>
+            <p class="blog-page-feature__summary">{featured.data.summary}</p>
+            <span class="blog-page-feature__more" aria-hidden="true">Read the guide</span>
+          </div>
+        </a>
+      )}
+
+      {rest.length > 0 && (
+        <div class="blog-page-grid">
+          {rest.map((p) => (
+            <a class="blog-page-card" href={`/blog/${p.id}/`}>
+              <div class="blog-page-card__media">
+                <Photo
+                  photo={p.data.photo}
+                  alt={p.data.photoAlt}
+                  caption={false}
+                  crop={[16, 10]}
+                  class="blog-page-card__photo"
+                  sizes="(min-width: 960px) 380px, (min-width: 640px) 50vw, 100vw"
+                  widths={[360, 540, 720]}
+                />
+              </div>
+              <div class="blog-page-card__body">
+                <time class="blog-page-card__date" datetime={p.data.pubDate.toISOString().slice(0, 10)}>
+                  {fmt(p.data.pubDate)}
+                </time>
+                <h3 class="blog-page-card__title">{p.data.h1}</h3>
+                <p class="blog-page-card__summary">{p.data.summary}</p>
+                <span class="blog-page-card__more" aria-hidden="true">Read the guide</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+  <section class="section section--mist blog-page-next" aria-labelledby="next-h">
+    <div class="wrap">
+      <div class="section-head blog-page-next__head">
+        <p class="eyebrow">Next step</p>
+        <h2 id="next-h">Need a shorter answer?</h2>
+        <p>Jump to the FAQ, download the checklist, or send plans for an itemised quote.</p>
+      </div>
+      <div class="blog-page-next__grid">
+        {nextLinks.map((l) => (
+          <a class="svc-card" href={l.href}>
+            <h3 class="svc-card__title">{l.title}</h3>
+            <p class="svc-card__summary">{l.text}</p>
+            <span class="svc-card__more" aria-hidden="true">Open</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <CtaBand />
 </BaseLayout>

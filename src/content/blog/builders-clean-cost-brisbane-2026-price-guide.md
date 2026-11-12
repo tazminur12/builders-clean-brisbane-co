@@ -1,5 +1,5 @@
 ---
-title: "Builders Clean Cost Brisbane 2026 Guide | Builders Clean Brisbane Co."
+title: "Builders Clean Cost Guide 2026 | Builders Clean Brisbane Co."
 description: "What a builders clean costs in Brisbane in 2026: the price factors, sample scenarios, and how to read an itemised quote so you can compare cleaners fairly."
 h1: "Builders Clean Cost Brisbane 2026: A Price Guide"
 keyword: "builders clean brisbane cost"

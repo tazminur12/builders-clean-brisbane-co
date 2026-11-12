@@ -1,9 +1,92 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PageHead from '../components/PageHead.astro';
+import Icon from '../components/Icon.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { PHOTOS } from '../data/photos';
+
+const links = [
+  {
+    href: '/services/',
+    title: 'Builders cleaning services',
+    text: 'Seventeen services from rough clean to sparkle and fit-out.',
+  },
+  {
+    href: '/areas/',
+    title: 'Areas we cover',
+    text: 'Brisbane City to the growth corridors — find your suburb.',
+  },
+  {
+    href: '/contact/#quote',
+    title: 'Get a free quote',
+    text: 'Send suburb, job type and plans — itemised quote back fast.',
+  },
+  {
+    href: '/our-work/',
+    title: 'Our work',
+    text: 'Real Brisbane job photos after the builders clean.',
+  },
+  {
+    href: '/faq/',
+    title: 'FAQ',
+    text: 'Booking, scope, access, insurance and residue answers.',
+  },
+  {
+    href: '/builders-clean-checklist/',
+    title: 'Builders clean checklist',
+    text: 'Room-by-room list of what a full final clean includes.',
+  },
+];
 ---
-<BaseLayout title="Page Not Found | Builders Clean Brisbane Co." description="That page has moved or never existed. Find builders cleaning services, service areas and the quote form for Builders Clean Brisbane Co. here instead." noindex noCanonical>
-  <PageHead h1="That page has been cleaned away" eyebrow="404">
-    <p class="lead">Try our <a href="/services/" style="color:var(--c-lime)">services</a>, <a href="/areas/" style="color:var(--c-lime)">service areas</a> or the <a href="/contact/" style="color:var(--c-lime)">quote form</a>.</p>
+<BaseLayout
+  title="Page Not Found | Builders Clean Brisbane Co."
+  description="That page has moved or never existed. Find builders cleaning services, service areas and the quote form for Builders Clean Brisbane Co. here instead."
+  ogImage={PHOTOS.dust.src}
+  noindex
+  noCanonical
+>
+  <PageHead
+    h1="That page has been cleaned away"
+    eyebrow="404"
+    photo="dust"
+    photoAlt="Construction dust removed from a Brisbane renovation"
+    meta={[
+      'Page not found',
+      'Try the links below',
+      'Or request a quote',
+    ]}
+  >
+    <div class="answer">
+      <p>
+        That address has moved or never existed. Pick a path below — services, areas, or a free quote.
+      </p>
+    </div>
+    <div class="btn-row mt-2">
+      <a class="btn btn--lime" href="/contact/#quote">
+        <Icon name="quote" />Get a free quote
+      </a>
+      <a class="btn btn--ghost-light" href="/">Back to home</a>
+    </div>
   </PageHead>
+
+  <section class="section section--soft err-page" aria-labelledby="find-h">
+    <div class="wrap">
+      <div class="section-head err-page__head">
+        <p class="eyebrow">Find your way</p>
+        <h2 id="find-h">Popular places on the site</h2>
+        <p>These pages cover what most builders and homeowners look for next.</p>
+      </div>
+      <div class="err-page__grid">
+        {links.map((l) => (
+          <a class="svc-card" href={l.href}>
+            <h3 class="svc-card__title">{l.title}</h3>
+            <p class="svc-card__summary">{l.text}</p>
+            <span class="svc-card__more" aria-hidden="true">Open</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
 </BaseLayout>
